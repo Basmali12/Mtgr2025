@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://basmali12.github.io/Mtgr2025/sitemap.xml
