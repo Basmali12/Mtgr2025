@@ -291,26 +291,13 @@
       height:100%;
       object-fit:cover;
     }
-
-    /* العنوان + الـ ID في سطر واحد */
-    .product-title-row{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:4px;
-      margin-top:2px;
-    }
     .product-title{
       font-size:12px;
       font-weight:600;
+      margin-top:2px;
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
-    }
-    .product-id{
-      font-size:10px;
-      color:var(--muted);
-      direction:ltr;
     }
 
     .rating-row{
@@ -327,6 +314,15 @@
     }
     .rating-stars i.fa-regular{opacity:0.4;}
     .rating-num{color:var(--muted);}
+
+    .product-meta{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-size:10px;
+      color:var(--muted);
+      margin-top:2px;
+    }
 
     .product-footer{
       display:flex;
@@ -404,18 +400,7 @@
       gap:4px;
       cursor:pointer;
     }
-    .course-title{
-      font-size:13px;
-      font-weight:600;
-      display:flex;
-      flex-direction:column;
-      gap:2px;
-    }
-    .course-id-small{
-      font-size:11px;
-      color:var(--muted);
-      direction:ltr;
-    }
+    .course-title{font-size:13px;font-weight:600;}
     .course-body{
       padding:10px;
       overflow:auto;
@@ -561,6 +546,70 @@
       color:var(--muted);
       cursor:pointer;
     }
+
+    /* إعلان ترحيبي قابل للتخطي */
+    #welcomeAdWrapper{
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:60;
+    }
+    #welcomeAdWrapper.active{
+      display:flex;
+    }
+    #welcomeAdBackdrop{
+      position:absolute;
+      inset:0;
+      background:rgba(15,23,42,0.86);
+      backdrop-filter:blur(4px);
+    }
+    #welcomeAdBox{
+      position:relative;
+      z-index:1;
+      max-width:420px;
+      width:90%;
+      background:radial-gradient(circle at top,#0f172a,#020617);
+      border-radius:20px;
+      border:1px solid rgba(148,163,184,0.4);
+      padding:16px 14px;
+      box-shadow:0 0 35px rgba(56,189,248,0.5);
+    }
+    #welcomeAdTitle{
+      font-size:15px;
+      margin-bottom:8px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    #welcomeAdTitle i{
+      color:#22d3ee;
+    }
+    #welcomeAdText{
+      font-size:13px;
+      color:#e5e7eb;
+      margin-bottom:14px;
+      line-height:1.7;
+    }
+    #welcomeAdNote{
+      font-size:11px;
+      color:#9ca3af;
+      margin-bottom:10px;
+    }
+    #welcomeSkipBtn{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      border:none;
+      border-radius:999px;
+      padding:7px 14px;
+      font-size:13px;
+      cursor:pointer;
+      background:linear-gradient(135deg,#f97316,#ec4899);
+      color:#0b1120;
+      font-weight:600;
+    }
   </style>
 </head>
 
@@ -648,13 +697,27 @@
 
 </main>
 
+<!-- إعلان ترحيبي قابل للتخطي -->
+<div id="welcomeAdWrapper">
+  <div id="welcomeAdBackdrop"></div>
+  <div id="welcomeAdBox">
+    <div id="welcomeAdTitle">
+      <i class="fa-solid fa-bullhorn"></i>
+      <span>إعلان من إدارة المتجر</span>
+    </div>
+    <div id="welcomeAdText"></div>
+    <div id="welcomeAdNote">يمكنك إغلاق هذه الرسالة بالضغط على زر تخطي.</div>
+    <button id="welcomeSkipBtn">
+      <i class="fa-solid fa-arrow-left"></i>
+      تخطي
+    </button>
+  </div>
+</div>
+
 <div class="course-overlay" id="courseOverlay">
   <div class="course-header">
     <button id="courseBackBtn"><i class="fa-solid fa-arrow-right"></i> رجوع للمتجر</button>
-    <div class="course-title">
-      <span id="courseTitleHead"></span>
-      <span id="courseIdHead" class="course-id-small"></span>
-    </div>
+    <div class="course-title" id="courseTitleHead"></div>
   </div>
   <div class="course-body">
     <div id="coursePreview" class="preview-box" style="display:none;"></div>
@@ -758,7 +821,6 @@
   const overlay        = document.getElementById("courseOverlay");
   const backBtn        = document.getElementById("courseBackBtn");
   const courseTitleHead= document.getElementById("courseTitleHead");
-  const courseIdHead   = document.getElementById("courseIdHead");
   const coursePreview  = document.getElementById("coursePreview");
   const openFieldsBox  = document.getElementById("openFields");
   const vipFieldsBox   = document.getElementById("vipFields");
@@ -774,6 +836,36 @@
   const passEyeBtn     = document.getElementById("passEyeBtn");
   const accNote        = document.getElementById("accNote");
   const storeLogoutBtn = document.getElementById("storeLogoutBtn");
+
+  // عناصر إعلان الترحيب
+  const welcomeAdWrapper = document.getElementById("welcomeAdWrapper");
+  const welcomeAdTextEl  = document.getElementById("welcomeAdText");
+  const welcomeSkipBtn   = document.getElementById("welcomeSkipBtn");
+
+  function showWelcomeAd(message){
+    if(!welcomeAdWrapper || !welcomeAdTextEl) return;
+    welcomeAdTextEl.textContent = message;
+    welcomeAdWrapper.classList.add("active");
+  }
+
+  if(welcomeSkipBtn && welcomeAdWrapper){
+    welcomeSkipBtn.addEventListener("click", ()=>{
+      welcomeAdWrapper.classList.remove("active");
+    });
+  }
+
+  async function loadWelcomeAd(){
+    try{
+      const snap = await db.collection("config").doc("store").get();
+      if(!snap.exists) return;
+      const data = snap.data() || {};
+      if(data.welcomeEnabled === true && data.welcomeText && String(data.welcomeText).trim() !== ""){
+        showWelcomeAd(String(data.welcomeText));
+      }
+    }catch(err){
+      console.error("welcomeAd error:", err);
+    }
+  }
 
   function generateUserId(){
     const rand = Math.floor(100000 + Math.random()*900000);
@@ -921,7 +1013,7 @@
   });
 
   async function loadProducts(){
-    const snap = await db.collection("products").get();
+    const snap = await db.collection("products").orderBy("id","asc").get();
     products = [];
     snap.forEach(docSnap => {
       const data = docSnap.data();
@@ -929,6 +1021,14 @@
     });
     renderProducts();
     renderCoursesIndex();
+
+    // إذا كان رابط فيه ?p=ID افتح الكورس مباشرة
+    const params = new URLSearchParams(window.location.search);
+    const pid = params.get("p");
+    if(pid){
+      const prod = products.find(p => String(p.id) === String(pid));
+      if(prod) openCourse(prod);
+    }
   }
 
   function renderProducts(){
@@ -968,17 +1068,16 @@
         </div>
       `;
 
-      const productIdText = (p.id !== undefined && p.id !== null) ? String(p.id) : "-";
-
       card.innerHTML = `
         <div class="product-image-box">
           ${imgUrl ? `<img src="${imgUrl}" alt="">` : ""}
         </div>
-        <div class="product-title-row">
-          <div class="product-title">${p.title || "منتج بدون عنوان"}</div>
-          <div class="product-id">ID: ${productIdText}</div>
-        </div>
+        <div class="product-title">${p.title || "منتج بدون عنوان"}</div>
         ${ratingHtml}
+        <div class="product-meta">
+          <span>ID: ${p.id ?? "-"}</span>
+          <span>${p.category || ""}</span>
+        </div>
         <div class="product-footer">
           <div>
             <div class="category-text">${p.category || ""}</div>
@@ -1043,7 +1142,7 @@
       const li = document.createElement("li");
       const a  = document.createElement("a");
       a.href = "?p=" + encodeURIComponent(p.id);
-      a.textContent = `${p.title} – ${catLabel} (ID: ${p.id}) من متجر فن التكلوجيا الحديث`;
+      a.textContent = `${p.title} – ${catLabel} من متجر فن التكلوجيا الحديث (ID: ${p.id})`;
       a.style.color = "#9ca3af";
       a.style.textDecoration = "none";
       li.appendChild(a);
@@ -1092,9 +1191,6 @@
   function openCourse(product){
     overlay.classList.add("active");
     courseTitleHead.textContent = product.title || "";
-    courseIdHead.textContent = (product.id !== undefined && product.id !== null)
-      ? "ID: " + String(product.id)
-      : "";
 
     coursePreview.innerHTML = "";
     coursePreview.style.display = "none";
@@ -1281,6 +1377,7 @@
     await initUser();
     await initVisitors();
     await loadProducts();
+    await loadWelcomeAd();
   })();
 </script>
 
