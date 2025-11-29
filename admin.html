@@ -147,7 +147,7 @@
     .card p{font-size:12px;color:var(--muted);margin-bottom:10px;}
 
     label{font-size:12px;color:var(--muted);display:block;margin-bottom:4px;}
-    input[type="text"], select{
+    input[type="text"], input[type="password"], select{
       width:100%;
       padding:7px 9px;
       border-radius:10px;
@@ -200,18 +200,6 @@
       gap:6px;
       align-items:center;
     }
-    .tag{
-      display:inline-flex;
-      align-items:center;
-      gap:4px;
-      padding:2px 6px;
-      border-radius:999px;
-      font-size:11px;
-      border:1px solid var(--border);
-      color:var(--muted);
-      margin-top:2px;
-    }
-    .tag.vip{border-color:var(--accent3);color:var(--accent3);}
     .status-msg{font-size:12px;margin-top:6px;}
     .status-ok{color:var(--success);}
     .status-err{color:#fecaca;}
@@ -255,6 +243,7 @@
   <section id="adminApp">
     <div class="tabs">
       <button class="tab-btn active" data-tab="addProduct"><i class="fa-solid fa-plus"></i> إضافة منتج</button>
+      <button class="tab-btn" data-tab="editProduct"><i class="fa-solid fa-pen-to-square"></i> تعديل منتج</button>
       <button class="tab-btn" data-tab="deleteProduct"><i class="fa-solid fa-trash"></i> حذف منتج</button>
       <button class="tab-btn" data-tab="vipUsers"><i class="fa-solid fa-crown"></i> تفعيل حساب VIP</button>
     </div>
@@ -287,6 +276,43 @@
         </button>
       </div>
       <div id="addStatus" class="status-msg"></div>
+    </div>
+
+    <!-- تعديل منتج -->
+    <div class="card tab-panel" id="tab-editProduct" style="display:none;">
+      <h2><i class="fa-solid fa-pen-to-square"></i> تعديل منتج موجود</h2>
+      <p>اكتب ID المنتج ثم اضغط "جلب بيانات المنتج"، بعدها عدّل البيانات واضغط "حفظ التعديلات".</p>
+
+      <label>ID المنتج</label>
+      <input type="text" id="editId" placeholder="مثال: 1">
+
+      <button class="btn btn-outline" id="loadProductBtn" style="margin-bottom:10px;">
+        <i class="fa-solid fa-magnifying-glass"></i> جلب بيانات المنتج
+      </button>
+
+      <label>اسم المنتج</label>
+      <input type="text" id="editName" placeholder="اسم المنتج">
+
+      <label>رابط صورة المنتج (1:1)</label>
+      <input type="text" id="editImage" placeholder="رابط صورة">
+
+      <label>التصنيف</label>
+      <input type="text" id="editCategory" placeholder="course / app / script ...">
+
+      <div style="margin:6px 0 4px;font-size:12px;font-weight:600;">روابط المحتوى</div>
+      <p class="small">يمكنك إضافة / حذف / تعديل الروابط ونوعها (مفتوح أو VIP).</p>
+
+      <div class="resources-list" id="editResourcesList"></div>
+      <button class="btn btn-outline" id="addEditResourceBtn">
+        <i class="fa-solid fa-link"></i> إضافة رابط جديد
+      </button>
+
+      <div style="margin-top:10px;">
+        <button class="btn btn-primary" id="saveEditProductBtn">
+          <i class="fa-solid fa-floppy-disk"></i> حفظ التعديلات
+        </button>
+      </div>
+      <div id="editStatus" class="status-msg"></div>
     </div>
 
     <!-- حذف منتج -->
@@ -351,7 +377,7 @@
   // كلمة السر مشفرة Base64: "BbZzAaMm" => "QmJaekFhTW0="
   const ADMIN_PASS_ENC = "QmJaekFhTW0=";
 
-  // عناصر DOM
+  // عناصر DOM الأساسية
   const loginScreen = document.getElementById("loginScreen");
   const adminApp    = document.getElementById("adminApp");
   const loginBtn    = document.getElementById("loginBtn");
@@ -415,13 +441,8 @@
     }
   })();
 
-  // ====== إضافة منتج ======
-  const resourcesList   = document.getElementById("resourcesList");
-  const addResourceBtn  = document.getElementById("addResourceBtn");
-  const saveProductBtn  = document.getElementById("saveProductBtn");
-  const addStatus       = document.getElementById("addStatus");
-
-  function addResourceRow(title="", url="", access="public"){
+  // ====== دالة عامة لإضافة صف رابط في أي قائمة ======
+  function addResourceRow(container, title="", url="", access="public"){
     const row = document.createElement("div");
     row.className = "resource-row";
     row.innerHTML = `
@@ -432,13 +453,19 @@
         <option value="vip" ${access==="vip"?"selected":""}>VIP</option>
       </select>
     `;
-    resourcesList.appendChild(row);
+    container.appendChild(row);
   }
 
-  addResourceBtn.addEventListener("click", ()=>addResourceRow());
+  // ====== إضافة منتج ======
+  const resourcesList   = document.getElementById("resourcesList");
+  const addResourceBtn  = document.getElementById("addResourceBtn");
+  const saveProductBtn  = document.getElementById("saveProductBtn");
+  const addStatus       = document.getElementById("addStatus");
+
+  addResourceBtn.addEventListener("click", ()=>addResourceRow(resourcesList));
 
   // سطر واحد افتراضي
-  addResourceRow();
+  addResourceRow(resourcesList);
 
   async function getNextProductId(){
     const snap = await db.collection("products").orderBy("id","desc").limit(1).get();
@@ -461,10 +488,10 @@
     const rows = resourcesList.querySelectorAll(".resource-row");
     const resources = [];
     rows.forEach(row=>{
-      const [tInput,uInput,sel] = row.querySelectorAll("input,select");
-      const t = tInput.value.trim();
-      const u = uInput.value.trim();
-      const a = sel.value;
+      const inputs = row.querySelectorAll("input,select");
+      const t = inputs[0].value.trim();
+      const u = inputs[1].value.trim();
+      const a = inputs[2].value;
       if(t && u){
         resources.push({title:t,url:u,access:a});
       }
@@ -498,11 +525,123 @@
       document.getElementById("pImage").value = "";
       document.getElementById("pCategory").value = "course";
       resourcesList.innerHTML = "";
-      addResourceRow();
+      addResourceRow(resourcesList);
     }catch(err){
       console.error(err);
       addStatus.textContent = "خطأ في الحفظ. تأكد من اتصالك بـ Firebase.";
       addStatus.className = "status-msg status-err";
+    }
+  });
+
+  // ====== تعديل منتج ======
+  const editIdInput         = document.getElementById("editId");
+  const loadProductBtn      = document.getElementById("loadProductBtn");
+  const editNameInput       = document.getElementById("editName");
+  const editImageInput      = document.getElementById("editImage");
+  const editCategoryInput   = document.getElementById("editCategory");
+  const editResourcesList   = document.getElementById("editResourcesList");
+  const addEditResourceBtn  = document.getElementById("addEditResourceBtn");
+  const saveEditProductBtn  = document.getElementById("saveEditProductBtn");
+  const editStatus          = document.getElementById("editStatus");
+
+  addEditResourceBtn.addEventListener("click", ()=> addResourceRow(editResourcesList));
+
+  loadProductBtn.addEventListener("click", async ()=>{
+    const id = editIdInput.value.trim();
+    if(!id){
+      editStatus.textContent = "اكتب ID المنتج أولاً.";
+      editStatus.className = "status-msg status-err";
+      return;
+    }
+    try{
+      const docRef = db.collection("products").doc(String(id));
+      const snap = await docRef.get();
+      if(!snap.exists){
+        editStatus.textContent = "لا يوجد منتج بهذا الـ ID.";
+        editStatus.className = "status-msg status-err";
+        editNameInput.value = "";
+        editImageInput.value = "";
+        editCategoryInput.value = "";
+        editResourcesList.innerHTML = "";
+        return;
+      }
+      const data = snap.data();
+      editNameInput.value     = data.title || "";
+      editImageInput.value    = data.image || "";
+      editCategoryInput.value = data.category || "";
+
+      editResourcesList.innerHTML = "";
+      if(Array.isArray(data.resources) && data.resources.length){
+        data.resources.forEach(r=>{
+          addResourceRow(editResourcesList, r.title || "", r.url || "", r.access || "public");
+        });
+      }else{
+        addResourceRow(editResourcesList);
+      }
+
+      editStatus.textContent = "تم جلب بيانات المنتج، يمكنك التعديل الآن.";
+      editStatus.className = "status-msg status-ok";
+    }catch(err){
+      console.error(err);
+      editStatus.textContent = "خطأ أثناء جلب البيانات.";
+      editStatus.className = "status-msg status-err";
+    }
+  });
+
+  saveEditProductBtn.addEventListener("click", async ()=>{
+    const id = editIdInput.value.trim();
+    if(!id){
+      editStatus.textContent = "اكتب ID المنتج.";
+      editStatus.className = "status-msg status-err";
+      return;
+    }
+    const title    = editNameInput.value.trim();
+    const image    = editImageInput.value.trim();
+    const category = editCategoryInput.value.trim() || "course";
+
+    if(!title){
+      editStatus.textContent = "اسم المنتج لا يمكن أن يكون فارغ.";
+      editStatus.className = "status-msg status-err";
+      return;
+    }
+
+    const rows = editResourcesList.querySelectorAll(".resource-row");
+    const resources = [];
+    rows.forEach(row=>{
+      const inputs = row.querySelectorAll("input,select");
+      const t = inputs[0].value.trim();
+      const u = inputs[1].value.trim();
+      const a = inputs[2].value;
+      if(t && u){
+        resources.push({title:t,url:u,access:a});
+      }
+    });
+
+    if(!resources.length){
+      editStatus.textContent = "أضف على الأقل رابط واحد.";
+      editStatus.className = "status-msg status-err";
+      return;
+    }
+
+    const accessVip = resources.some(r=>r.access==="vip");
+
+    try{
+      await db.collection("products").doc(String(id)).set({
+        id: Number(id),
+        title,
+        image,
+        category,
+        resources,
+        accessVip,
+        updatedAt: new Date().toISOString()
+      }, {merge:true}); // ما يمسح ratingSum / ratingCount
+
+      editStatus.textContent = "تم حفظ التعديلات بنجاح.";
+      editStatus.className = "status-msg status-ok";
+    }catch(err){
+      console.error(err);
+      editStatus.textContent = "خطأ أثناء حفظ التعديلات.";
+      editStatus.className = "status-msg status-err";
     }
   });
 
