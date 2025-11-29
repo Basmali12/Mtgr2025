@@ -291,13 +291,26 @@
       height:100%;
       object-fit:cover;
     }
+
+    /* العنوان + الـ ID في سطر واحد */
+    .product-title-row{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:4px;
+      margin-top:2px;
+    }
     .product-title{
       font-size:12px;
       font-weight:600;
-      margin-top:2px;
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
+    }
+    .product-id{
+      font-size:10px;
+      color:var(--muted);
+      direction:ltr;
     }
 
     .rating-row{
@@ -391,7 +404,18 @@
       gap:4px;
       cursor:pointer;
     }
-    .course-title{font-size:13px;font-weight:600;}
+    .course-title{
+      font-size:13px;
+      font-weight:600;
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+    }
+    .course-id-small{
+      font-size:11px;
+      color:var(--muted);
+      direction:ltr;
+    }
     .course-body{
       padding:10px;
       overflow:auto;
@@ -610,12 +634,7 @@
     <button class="filter-chip" data-filter="vip">VIP</button>
   </section>
 
-  <!-- المنتجات + رسالة التحميل -->
-  <section class="products-grid" id="productsGrid">
-    <div id="loadingMsg" style="grid-column:1 / -1;font-size:12px;color:var(--muted);">
-      جاري تحميل المنتجات...
-    </div>
-  </section>
+  <section class="products-grid" id="productsGrid"></section>
 
   <!-- فهرس المنتجات للتصدر في البحث -->
   <section id="coursesIndex">
@@ -632,7 +651,10 @@
 <div class="course-overlay" id="courseOverlay">
   <div class="course-header">
     <button id="courseBackBtn"><i class="fa-solid fa-arrow-right"></i> رجوع للمتجر</button>
-    <div class="course-title" id="courseTitleHead"></div>
+    <div class="course-title">
+      <span id="courseTitleHead"></span>
+      <span id="courseIdHead" class="course-id-small"></span>
+    </div>
   </div>
   <div class="course-body">
     <div id="coursePreview" class="preview-box" style="display:none;"></div>
@@ -736,6 +758,7 @@
   const overlay        = document.getElementById("courseOverlay");
   const backBtn        = document.getElementById("courseBackBtn");
   const courseTitleHead= document.getElementById("courseTitleHead");
+  const courseIdHead   = document.getElementById("courseIdHead");
   const coursePreview  = document.getElementById("coursePreview");
   const openFieldsBox  = document.getElementById("openFields");
   const vipFieldsBox   = document.getElementById("vipFields");
@@ -908,31 +931,20 @@
     renderCoursesIndex();
   }
 
-  // ====== دالة عرض المنتجات مع فلترة مفتوح / VIP + إزالة رسالة التحميل ======
   function renderProducts(){
-    const loadingMsg = document.getElementById("loadingMsg");
-    if (loadingMsg) loadingMsg.remove();
-
     productsGrid.innerHTML = "";
     const filtered = products.filter(p => {
-      // فلتر البحث
-      if (searchTerm) {
+      if(searchTerm){
         const t = (p.title || "").toLowerCase();
         const c = (p.category || "").toLowerCase();
-        if (!t.includes(searchTerm) && !c.includes(searchTerm)) return false;
+        if(!t.includes(searchTerm) && !c.includes(searchTerm)) return false;
       }
-
-      // فلتر الحالة
-      if (currentFilter === "public") {
-        // منتجات مجانية / مفتوحة
-        return !p.accessVip;
+      if(currentFilter === "public"){
+        return Array.isArray(p.resources) && p.resources.some(r => r.access === "public");
       }
-      if (currentFilter === "vip") {
-        // منتجات VIP فقط
-        return !!p.accessVip;
+      if(currentFilter === "vip"){
+        return Array.isArray(p.resources) && p.resources.some(r => r.access === "vip");
       }
-
-      // الكل
       return true;
     });
 
@@ -956,11 +968,16 @@
         </div>
       `;
 
+      const productIdText = (p.id !== undefined && p.id !== null) ? String(p.id) : "-";
+
       card.innerHTML = `
         <div class="product-image-box">
           ${imgUrl ? `<img src="${imgUrl}" alt="">` : ""}
         </div>
-        <div class="product-title">${p.title || "منتج بدون عنوان"}</div>
+        <div class="product-title-row">
+          <div class="product-title">${p.title || "منتج بدون عنوان"}</div>
+          <div class="product-id">ID: ${productIdText}</div>
+        </div>
         ${ratingHtml}
         <div class="product-footer">
           <div>
@@ -1026,7 +1043,7 @@
       const li = document.createElement("li");
       const a  = document.createElement("a");
       a.href = "?p=" + encodeURIComponent(p.id);
-      a.textContent = `${p.title} – ${catLabel} من متجر فن التكلوجيا الحديث`;
+      a.textContent = `${p.title} – ${catLabel} (ID: ${p.id}) من متجر فن التكلوجيا الحديث`;
       a.style.color = "#9ca3af";
       a.style.textDecoration = "none";
       li.appendChild(a);
@@ -1075,6 +1092,9 @@
   function openCourse(product){
     overlay.classList.add("active");
     courseTitleHead.textContent = product.title || "";
+    courseIdHead.textContent = (product.id !== undefined && product.id !== null)
+      ? "ID: " + String(product.id)
+      : "";
 
     coursePreview.innerHTML = "";
     coursePreview.style.display = "none";
@@ -1208,7 +1228,7 @@
     storeLogoutBtn.addEventListener("click", ()=>{
       localStorage.removeItem("FTM_USER_ID");
       localStorage.removeItem("FTM_USER_PASS");
-      location.href = location.pathname; // إعادة تحميل المتجر بدون الكاش
+      location.href = location.pathname;
     });
   }
 
@@ -1257,13 +1277,10 @@
     });
   }
 
-  // ===== بدء التشغيل (تسريع التحميل باستخدام Promise.all) =====
   (async function start(){
     await initUser();
-    await Promise.all([
-      initVisitors(),
-      loadProducts()
-    ]);
+    await initVisitors();
+    await loadProducts();
   })();
 </script>
 
