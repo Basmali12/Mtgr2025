@@ -1,14 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
 
+  <!-- الصفحة الرئيسية -->
   <url>
     <loc>https://basmali12.github.io/Mtgr2025/</loc>
+    <lastmod>2025-11-29</lastmod>
     <priority>1.0</priority>
+    <changefreq>daily</changefreq>
   </url>
 
+  <!-- صفحة المتجر (المنتجات) -->
   <url>
-    <loc>https://basmali12.github.io/Mtgr2025/?p=1</loc>
-    <priority>0.8</priority>
+    <loc>https://basmali12.github.io/Mtgr2025/index.html</loc>
+    <lastmod>2025-11-29</lastmod>
+    <priority>0.9</priority>
+    <changefreq>daily</changefreq>
+  </url>
+
+  <!-- صفحة الأدمن -->
+  <url>
+    <loc>https://basmali12.github.io/Mtgr2025/admin.html</loc>
+    <lastmod>2025-11-29</lastmod>
+    <priority>0.5</priority>
+    <changefreq>monthly</changefreq>
   </url>
 
 </urlset>
