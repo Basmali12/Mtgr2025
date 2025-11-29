@@ -11,12 +11,12 @@
   <meta name="keywords" content="فن التكلوجيا الحديث, متجر كورسات, كورسات مجانية, كورسات VIP, برامج تعليم, برامج مهكرة, برامج معدلة, برامج هكر, ثغرات تعليمية, قوالب جاهزة, قوالب بلوجر, سكربتات, أدوات اختراق تعليمية, أدوات تكنولوجيا, دورات برمجة, دورات تصميم, سيرفرات مدفوعة, سيرفرات IPTV, ذكاء اصطناعي, AI, ادوات هكر للتعليم, ادوات حماية, قنوات تيليجرام تعليمية">
   <meta name="author" content="Basm / فن التكلوجيا الحديث">
 
-  <!-- Open Graph (فيسبوك / واتساب) -->
+  <!-- Open Graph -->
   <meta property="og:title" content="فن التكلوجيا الحديث – كورسات، برامج، محتوى VIP">
   <meta property="og:description" content="كورسات مجانية ومدفوعة، برامج تعليم، أدوات مهكرة ومعدلة للتجربة، محتوى VIP بسعر رمزي، كل شيء في مكان واحد.">
   <meta property="og:image" content="https://k.top4top.io/p_3620yt6g21.jpg">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://example.com">
+  <meta property="og:url" content="https://basmali12.github.io/Mtgr2025/">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
@@ -27,7 +27,7 @@
   <!-- Favicon -->
   <link rel="icon" href="https://k.top4top.io/p_3620yt6g21.jpg" type="image/jpeg">
 
-  <!-- خطوط و أيقونات -->
+  <!-- Fonts & Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
@@ -54,6 +54,7 @@
       color:var(--text);
       min-height:100vh;
     }
+
     header{
       padding:10px 14px;
       border-bottom:1px solid var(--border);
@@ -81,6 +82,14 @@
     .logo-text{display:flex;flex-direction:column;line-height:1.1}
     .logo-title{font-size:16px;font-weight:700}
     .logo-sub{font-size:11px;color:var(--muted)}
+
+    .header-right{
+      display:flex;
+      flex-direction:column;
+      align-items:flex-end;
+      gap:4px;
+    }
+
     .user-chip{
       font-size:11px;
       padding:4px 8px;
@@ -93,6 +102,19 @@
       gap:2px;
     }
     .user-chip span:last-child{color:var(--accent);font-weight:600}
+
+    .account-btn{
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(15,23,42,0.96);
+      color:var(--muted);
+      padding:4px 8px;
+      font-size:11px;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      gap:4px;
+    }
 
     main{max-width:1100px;margin:10px auto 20px;padding:0 10px}
 
@@ -179,6 +201,30 @@
       color:white;
     }
 
+    .search-box{
+      margin-bottom:8px;
+      display:flex;
+      gap:6px;
+    }
+    .search-box input{
+      flex:1;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(15,23,42,0.96);
+      color:var(--text);
+      font-size:12px;
+    }
+    .search-box button{
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(15,23,42,0.96);
+      color:var(--muted);
+      padding:4px 8px;
+      font-size:11px;
+      cursor:pointer;
+    }
+
     .filters{
       display:flex;
       gap:6px;
@@ -253,6 +299,22 @@
       overflow:hidden;
       text-overflow:ellipsis;
     }
+
+    .rating-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-top:3px;
+      font-size:11px;
+    }
+    .rating-stars i{
+      cursor:pointer;
+      margin-inline-start:2px;
+      color:#facc15;
+    }
+    .rating-stars i.fa-regular{opacity:0.4;}
+    .rating-num{color:var(--muted);}
+
     .product-footer{
       display:flex;
       justify-content:space-between;
@@ -268,6 +330,12 @@
       border:1px solid rgba(148,163,184,0.8);
     }
     .badge-small.vip{border-color:var(--accent3);color:var(--accent3);}
+
+    .product-actions{
+      display:flex;
+      align-items:center;
+      gap:4px;
+    }
     .btn-enter{
       border:none;
       border-radius:999px;
@@ -279,6 +347,18 @@
       display:inline-flex;
       align-items:center;
       gap:4px;
+    }
+    .btn-share{
+      border:none;
+      border-radius:999px;
+      padding:4px 7px;
+      font-size:11px;
+      cursor:pointer;
+      background:rgba(15,23,42,0.96);
+      color:var(--muted);
+      display:inline-flex;
+      align-items:center;
+      gap:3px;
     }
 
     .course-overlay{
@@ -321,7 +401,6 @@
       gap:10px;
     }
 
-    /* فيديو المعاينة */
     .preview-box{
       max-width:480px;
       margin:0 auto;
@@ -387,13 +466,76 @@
       margin-top:6px;
     }
 
-    /* فوتر بسيط للكلمات المفتاحية */
     .seo-footer{
       font-size:10px;
       color:var(--muted);
       opacity:0.8;
       margin-top:12px;
       padding:0 4px 8px;
+    }
+
+    /* فهرس المنتجات */
+    #coursesIndex{
+      margin-top:14px;
+      font-size:12px;
+    }
+
+    /* نافذة حسابي */
+    .account-modal{
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:50;
+    }
+    .account-modal.open{display:flex;}
+    .account-modal::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:rgba(15,23,42,0.8);
+      backdrop-filter:blur(4px);
+    }
+    .account-card{
+      position:relative;
+      background:var(--card);
+      border-radius:16px;
+      border:1px solid var(--border);
+      padding:14px;
+      width:90%;
+      max-width:360px;
+      z-index:1;
+      font-size:12px;
+    }
+    .account-row{
+      margin-top:6px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:6px;
+    }
+    .eye-btn,
+    .logout-small{
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(15,23,42,0.96);
+      color:var(--muted);
+      padding:4px 8px;
+      font-size:11px;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      gap:4px;
+    }
+    .account-close{
+      position:absolute;
+      top:8px;
+      inset-inline-end:8px;
+      border:none;
+      background:transparent;
+      color:var(--muted);
+      cursor:pointer;
     }
   </style>
 </head>
@@ -410,15 +552,20 @@
       <div class="logo-sub">متجر كورسات – تكنولوجيا حديثة &amp; VIP</div>
     </div>
   </div>
-  <div class="user-chip">
-    <span>حالة الحساب: <strong id="accountStateText">...</strong></span>
-    <span>ID: <span id="userIdChip">----</span></span>
+  <div class="header-right">
+    <div class="user-chip">
+      <span>حالة الحساب: <strong id="accountStateText">...</strong></span>
+      <span>ID: <span id="userIdChip">----</span></span>
+      <span id="visitsLabel">الزوار: --</span>
+    </div>
+    <button id="accountBtn" class="account-btn">
+      <i class="fa-solid fa-user"></i> حسابي
+    </button>
   </div>
 </header>
 
 <main>
 
-  <!-- شريط الاشتراك المختصر -->
   <section class="user-status-bar">
     <div>
       <div class="user-status-text" id="vipShortText">
@@ -438,14 +585,13 @@
     </div>
   </section>
 
-  <!-- إعداد الحساب -->
   <section class="profile-box">
     <div>حسابك محفوظ على هذا الجهاز. إذا رجعت لاحقًا، استخدم نفس <strong>ID</strong> وكلمة السر.</div>
     <div class="profile-row">
       <span>ID الحالي:</span>
       <span id="userIdDisplay" style="font-weight:600;"></span>
     </div>
-    <div class="profile-row">
+    <div class="profile-row" id="passwordRow">
       <span>أنشئ كلمة سر:</span>
       <input type="password" id="passwordInput" placeholder="٢-١٢ حرف / رقم">
       <button id="savePasswordBtn">حفظ الحساب</button>
@@ -453,24 +599,31 @@
     </div>
   </section>
 
-  <!-- فلاتر -->
+  <section class="search-box">
+    <input type="text" id="searchInput" placeholder="ابحث عن كورس أو تطبيق أو منتج...">
+    <button id="clearSearchBtn"><i class="fa-solid fa-xmark"></i></button>
+  </section>
+
   <section class="filters">
     <button class="filter-chip active" data-filter="all">الكل</button>
     <button class="filter-chip" data-filter="public">مفتوح</button>
     <button class="filter-chip" data-filter="vip">VIP</button>
   </section>
 
-  <!-- شبكة المنتجات -->
   <section class="products-grid" id="productsGrid"></section>
 
-  <!-- فوتر للكلمات المفتاحية (قابل للقراءة) -->
+  <!-- فهرس المنتجات للتصدر في البحث -->
+  <section id="coursesIndex">
+    <h2 style="font-size:13px;margin-bottom:6px;">فهرس جميع المنتجات والتصنيفات</h2>
+    <ul id="coursesIndexList" style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:4px;"></ul>
+  </section>
+
   <footer class="seo-footer">
-    فن التكلوجيا الحديث هو متجر كورسات مجانية ومدفوعة، كورسات VIP، برامج تعليم، برامج مهكرة ومعدلة للتجربة، أدوات هكر تعليمية، أدوات حماية، قوالب جاهزة، سكربتات، سيرفرات، وثغرات تعليمية في مجال الأمن والحماية والتكنولوجيا الحديثة.
+    فن التكلوجيا الحديث هو متجر كورسات مجانية ومدفوعة، كورسات VIP، برامج تعليم، تطبيقات، سكربتات، برامج مهكرة ومعدلة للتجربة، أدوات هكر تعليمية، أدوات حماية، قوالب جاهزة، سيرفرات، وثغرات تعليمية في مجال الأمن والحماية والتكنولوجيا الحديثة.
   </footer>
 
 </main>
 
-<!-- صفحة الكورس -->
 <div class="course-overlay" id="courseOverlay">
   <div class="course-header">
     <button id="courseBackBtn"><i class="fa-solid fa-arrow-right"></i> رجوع للمتجر</button>
@@ -504,6 +657,30 @@
   </div>
 </div>
 
+<!-- نافذة حسابي -->
+<div id="accountModal" class="account-modal">
+  <div class="account-card">
+    <button class="account-close" id="accountCloseBtn"><i class="fa-solid fa-xmark"></i></button>
+    <h3 style="font-size:14px;margin-bottom:4px;">حسابي</h3>
+    <p style="font-size:11px;color:var(--muted);">هذه معلومات حسابك المحفوظ على هذا الجهاز.</p>
+    <div class="account-row">
+      <span>ID:</span>
+      <span id="accIdText" style="font-weight:600;"></span>
+    </div>
+    <div class="account-row">
+      <span>كلمة السر:</span>
+      <span id="accPassText" style="direction:ltr;"></span>
+      <button class="eye-btn" id="passEyeBtn"><i class="fa-solid fa-eye"></i></button>
+    </div>
+    <div id="accNote" style="font-size:10px;color:var(--muted);margin-top:6px;"></div>
+    <div style="margin-top:10px;text-align:left;">
+      <button class="logout-small" id="storeLogoutBtn">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i> تسجيل خروج
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- Firebase v8 -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
@@ -528,6 +705,10 @@
   let vipUntil = null;
   let products = [];
   let currentFilter = "all";
+  let searchTerm = "";
+  let userPassword = null;
+  let passTimer = null;
+  let ratedProducts = JSON.parse(localStorage.getItem("FTM_RATED") || "[]");
 
   const userIdChip      = document.getElementById("userIdChip");
   const userIdDisplay   = document.getElementById("userIdDisplay");
@@ -535,13 +716,17 @@
   const vipShortText    = document.getElementById("vipShortText");
   const vipStateBadge   = document.getElementById("vipStateBadge");
   const vipBtn          = document.getElementById("vipWhatsappBtn");
+  const visitsLabel     = document.getElementById("visitsLabel");
 
   const passwordInput  = document.getElementById("passwordInput");
   const savePassBtn    = document.getElementById("savePasswordBtn");
   const passwordStatus = document.getElementById("passwordStatus");
+  const passwordRow    = document.getElementById("passwordRow");
 
   const productsGrid   = document.getElementById("productsGrid");
   const filterChips    = document.querySelectorAll(".filter-chip");
+  const searchInput    = document.getElementById("searchInput");
+  const clearSearchBtn = document.getElementById("clearSearchBtn");
 
   const overlay        = document.getElementById("courseOverlay");
   const backBtn        = document.getElementById("courseBackBtn");
@@ -553,6 +738,15 @@
   const vipLockedMsg   = document.getElementById("vipLockedMsg");
   const vipSectionBadge= document.getElementById("vipSectionBadge");
 
+  const accountBtn     = document.getElementById("accountBtn");
+  const accountModal   = document.getElementById("accountModal");
+  const accountCloseBtn= document.getElementById("accountCloseBtn");
+  const accIdText      = document.getElementById("accIdText");
+  const accPassText    = document.getElementById("accPassText");
+  const passEyeBtn     = document.getElementById("passEyeBtn");
+  const accNote        = document.getElementById("accNote");
+  const storeLogoutBtn = document.getElementById("storeLogoutBtn");
+
   function generateUserId(){
     const rand = Math.floor(100000 + Math.random()*900000);
     return "U" + rand;
@@ -560,7 +754,7 @@
 
   async function initUser(){
     currentUserId = localStorage.getItem("FTM_USER_ID");
-    let userPass  = localStorage.getItem("FTM_USER_PASS");
+    let userPassLS  = localStorage.getItem("FTM_USER_PASS");
 
     if(!currentUserId){
       currentUserId = generateUserId();
@@ -570,17 +764,14 @@
     userIdChip.textContent    = currentUserId;
     userIdDisplay.textContent = currentUserId;
 
-    if(userPass){
-      passwordInput.value = userPass;
-    }
-
     const userRef  = db.collection("users").doc(currentUserId);
     const userSnap = await userRef.get();
 
     if(!userSnap.exists){
+      userPassword = userPassLS || "";
       await userRef.set({
         id: currentUserId,
-        password: userPass || "",
+        password: userPassword || "",
         isVip: false,
         vipUntil: null,
         createdAt: new Date().toISOString()
@@ -591,11 +782,17 @@
       const data = userSnap.data();
       isVip = !!data.isVip;
       vipUntil = data.vipUntil ? new Date(data.vipUntil) : null;
+      userPassword = data.password || userPassLS || "";
+    }
 
-      if(data.password && !userPass){
-        localStorage.setItem("FTM_USER_PASS", data.password);
-        passwordInput.value = data.password;
-      }
+    if(userPassword){
+      localStorage.setItem("FTM_USER_PASS", userPassword);
+      passwordInput.value = "";
+      passwordRow.style.display = "none";
+      passwordStatus.textContent = "كلمة السر محفوظة. يمكنك مشاهدتها من أيقونة (حسابي) في الأعلى.";
+      passwordStatus.style.color = "#9ca3af";
+    }else if(userPassLS){
+      passwordInput.value = userPassLS;
     }
 
     updateVipUI();
@@ -635,6 +832,27 @@
     }
   }
 
+  async function initVisitors(){
+    if(!visitsLabel) return;
+    try{
+      const ref = db.collection("stats").doc("global");
+      const newCount = await db.runTransaction(async (tx)=>{
+        const snap = await tx.get(ref);
+        let current = 0;
+        if(snap.exists && typeof snap.data().visits === "number"){
+          current = snap.data().visits;
+        }
+        const next = current + 1;
+        tx.set(ref,{visits:next},{merge:true});
+        return next;
+      });
+      visitsLabel.textContent = "الزوار: " + newCount;
+    }catch(e){
+      console.error(e);
+      visitsLabel.textContent = "الزوار: --";
+    }
+  }
+
   savePassBtn.addEventListener("click", async () => {
     const pass = passwordInput.value.trim();
     if(pass.length < 2 || pass.length > 12){
@@ -651,13 +869,27 @@
       }, { merge:true });
 
       localStorage.setItem("FTM_USER_PASS", pass);
+      userPassword = pass;
       passwordStatus.textContent = "تم حفظ الحساب.";
       passwordStatus.style.color = "#22c55e";
+      passwordRow.style.display = "none";
     }catch(e){
       console.error(e);
       passwordStatus.textContent = "خطأ في الحفظ.";
       passwordStatus.style.color = "#fecaca";
     }
+  });
+
+  searchInput.addEventListener("input", ()=>{
+    searchTerm = searchInput.value.trim().toLowerCase();
+    renderProducts();
+    renderCoursesIndex();
+  });
+  clearSearchBtn.addEventListener("click", ()=>{
+    searchInput.value = "";
+    searchTerm = "";
+    renderProducts();
+    renderCoursesIndex();
   });
 
   async function loadProducts(){
@@ -668,11 +900,17 @@
       products.push(data);
     });
     renderProducts();
+    renderCoursesIndex();
   }
 
   function renderProducts(){
     productsGrid.innerHTML = "";
     const filtered = products.filter(p => {
+      if(searchTerm){
+        const t = (p.title || "").toLowerCase();
+        const c = (p.category || "").toLowerCase();
+        if(!t.includes(searchTerm) && !c.includes(searchTerm)) return false;
+      }
       if(currentFilter === "public"){
         return Array.isArray(p.resources) && p.resources.some(r => r.access === "public");
       }
@@ -686,20 +924,53 @@
       const card = document.createElement("article");
       card.className = "product-card" + (p.accessVip ? " vip" : "");
       const imgUrl = p.image || "";
+      const ratingSum   = typeof p.ratingSum === "number" ? p.ratingSum : 0;
+      const ratingCount = typeof p.ratingCount === "number" ? p.ratingCount : 0;
+      const avgRating   = ratingCount > 0 ? (ratingSum / ratingCount) : 0;
+      const rounded     = Math.round(avgRating || 0);
+
+      const ratingHtml = `
+        <div class="rating-row">
+          <div class="rating-stars">
+            ${[1,2,3,4,5].map(i=>`
+              <i class="fa-star ${i <= rounded ? 'fa-solid' : 'fa-regular'}" data-value="${i}"></i>
+            `).join('')}
+          </div>
+          <div class="rating-num">${avgRating ? avgRating.toFixed(1) : 'لا يوجد تقييم'}</div>
+        </div>
+      `;
+
       card.innerHTML = `
         <div class="product-image-box">
           ${imgUrl ? `<img src="${imgUrl}" alt="">` : ""}
         </div>
         <div class="product-title">${p.title || "منتج بدون عنوان"}</div>
+        ${ratingHtml}
         <div class="product-footer">
           <div>
             <div class="category-text">${p.category || ""}</div>
             ${p.accessVip ? '<span class="badge-small vip">VIP</span>' : '<span class="badge-small">مفتوح</span>'}
           </div>
-          <button class="btn-enter"><i class="fa-solid fa-arrow-left"></i> دخول</button>
+          <div class="product-actions">
+            <button class="btn-share" title="مشاركة المنتج"><i class="fa-solid fa-share-nodes"></i></button>
+            <button class="btn-enter"><i class="fa-solid fa-arrow-left"></i> دخول</button>
+          </div>
         </div>
       `;
+
       card.querySelector(".btn-enter").addEventListener("click", () => openCourse(p));
+
+      const stars = card.querySelectorAll(".rating-stars i");
+      stars.forEach(star=>{
+        star.addEventListener("click", ()=>{
+          const val = parseInt(star.dataset.value,10) || 0;
+          rateProduct(p, val);
+        });
+      });
+
+      const shareBtn = card.querySelector(".btn-share");
+      shareBtn.addEventListener("click", ()=> shareProduct(p));
+
       productsGrid.appendChild(card);
     });
 
@@ -713,12 +984,47 @@
     }
   }
 
+  function renderCoursesIndex(){
+    const ul = document.getElementById("coursesIndexList");
+    if(!ul) return;
+    ul.innerHTML = "";
+
+    const list = products.filter(p=>{
+      if(searchTerm){
+        const t = (p.title || "").toLowerCase();
+        const c = (p.category || "").toLowerCase();
+        if(!t.includes(searchTerm) && !c.includes(searchTerm)) return false;
+      }
+      return p.id && p.title;
+    });
+
+    list.forEach(p=>{
+      const cat = (p.category || "").toLowerCase();
+      let catLabel = "منتج";
+      if (cat.includes("course"))   catLabel = "كورس تعليمي";
+      else if (cat.includes("app")) catLabel = "تطبيق";
+      else if (cat.includes("script")) catLabel = "سكربت";
+      else if (cat.includes("template")) catLabel = "قالب جاهز";
+      else if (cat.includes("tool")) catLabel = "أداة تكنولوجية";
+
+      const li = document.createElement("li");
+      const a  = document.createElement("a");
+      a.href = "?p=" + encodeURIComponent(p.id);
+      a.textContent = `${p.title} – ${catLabel} من متجر فن التكلوجيا الحديث`;
+      a.style.color = "#9ca3af";
+      a.style.textDecoration = "none";
+      li.appendChild(a);
+      ul.appendChild(li);
+    });
+  }
+
   filterChips.forEach(chip => {
     chip.addEventListener("click", () => {
       filterChips.forEach(c => c.classList.remove("active"));
       chip.classList.add("active");
       currentFilter = chip.dataset.filter;
       renderProducts();
+      renderCoursesIndex();
     });
   });
 
@@ -729,7 +1035,6 @@
            u.endsWith(".mp4") || u.endsWith(".webm") || u.endsWith(".ogg");
   }
 
-  // فيديو المعاينة مع poster = صورة المنتج
   function buildVideoElement(url, poster){
     if(url.includes("youtube.com") || url.includes("youtu.be")){
       let videoId = "";
@@ -841,8 +1146,104 @@
     overlay.classList.remove("active");
   });
 
+  function maskPassword(p){
+    if(!p) return "لم يتم تعيين كلمة سر";
+    return "•".repeat(Math.max(p.length,4));
+  }
+
+  accountBtn.addEventListener("click", ()=>{
+    accountModal.classList.add("open");
+    accIdText.textContent = currentUserId || "--";
+    if(userPassword){
+      accPassText.textContent = maskPassword(userPassword);
+      passEyeBtn.disabled = false;
+      accNote.textContent = "يمكنك إظهار كلمة السر لمدة ٣٠ ثانية فقط.";
+    }else{
+      accPassText.textContent = "لم يتم تعيين كلمة سر بعد.";
+      passEyeBtn.disabled = true;
+      accNote.textContent = "قم بتعيين كلمة سر من صندوق (إعداد الحساب) في الأسفل.";
+    }
+  });
+
+  accountCloseBtn.addEventListener("click", ()=>{
+    accountModal.classList.remove("open");
+    if(passTimer){clearTimeout(passTimer);passTimer=null;}
+  });
+  accountModal.addEventListener("click", (e)=>{
+    if(e.target === accountModal){
+      accountCloseBtn.click();
+    }
+  });
+
+  passEyeBtn.addEventListener("click", ()=>{
+    if(!userPassword) return;
+    if(passTimer){clearTimeout(passTimer);}
+    accPassText.textContent = userPassword;
+    passEyeBtn.disabled = true;
+    accNote.textContent = "سيتم إخفاء كلمة السر تلقائياً بعد ٣٠ ثانية.";
+    passTimer = setTimeout(()=>{
+      accPassText.textContent = maskPassword(userPassword);
+      passEyeBtn.disabled = false;
+      accNote.textContent = "يمكنك إظهار كلمة السر لمدة ٣٠ ثانية فقط.";
+    }, 30000);
+  });
+
+  if(storeLogoutBtn){
+    storeLogoutBtn.addEventListener("click", ()=>{
+      localStorage.removeItem("FTM_USER_ID");
+      localStorage.removeItem("FTM_USER_PASS");
+      location.href = location.pathname; // إعادة تحميل المتجر بدون الكاش
+    });
+  }
+
+  function shareProduct(p){
+    const baseUrl = window.location.origin + window.location.pathname;
+    const url = baseUrl + "?p=" + encodeURIComponent(p.id);
+    const text = "شوف هذا المنتج في متجر فن التكلوجيا الحديث: " + (p.title || "منتج");
+    if(navigator.share){
+      navigator.share({
+        title: p.title || "منتج",
+        text,
+        url
+      }).catch(()=>{});
+    }else{
+      if(navigator.clipboard){
+        navigator.clipboard.writeText(url).then(()=>{
+          alert("تم نسخ رابط المنتج:\n" + url);
+        }).catch(()=>{
+          alert("رابط المنتج:\n" + url);
+        });
+      }else{
+        alert("رابط المنتج:\n" + url);
+      }
+    }
+  }
+
+  function rateProduct(product, value){
+    if(!value || value < 1 || value > 5) return;
+    if(ratedProducts.includes(product.id)){
+      alert("قيّمت هذا المنتج من قبل.");
+      return;
+    }
+    const ref = db.collection("products").doc(String(product.id));
+    ref.set({
+      ratingSum: firebase.firestore.FieldValue.increment(value),
+      ratingCount: firebase.firestore.FieldValue.increment(1)
+    }, {merge:true})
+    .then(()=>{
+      ratedProducts.push(product.id);
+      localStorage.setItem("FTM_RATED", JSON.stringify(ratedProducts));
+      loadProducts();
+    })
+    .catch(err=>{
+      console.error(err);
+      alert("حدث خطأ أثناء حفظ التقييم.");
+    });
+  }
+
   (async function start(){
     await initUser();
+    await initVisitors();
     await loadProducts();
   })();
 </script>
