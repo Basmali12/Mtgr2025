@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>فن التكلوجيا الحديث - لوحة تحكم الأدمن</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <style>
+    :root{
+      --bg:#020617;
+      --card:rgba(15,23,42,0.98);
+      --accent:#22d3ee;
+      --accent2:#a855f7;
+      --accent3:#facc15;
+      --danger:#ef4444;
+      --success:#10b981;
+      --border:rgba(148,163,184,0.35);
+      --text:#e5e7eb;
+      --muted:#9ca3af;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:"Tajawal",system-ui,sans-serif;
+      background:
+        radial-gradient(circle at top,rgba(56,189,248,0.16),transparent 60%),
+        radial-gradient(circle at bottom,rgba(168,85,247,0.16),transparent 55%),
+        linear-gradient(135deg,#020617,#020617 40%,#030b1e);
+      color:var(--text);
+      min-height:100vh;
+    }
+    header{
+      padding:10px 14px;
+      border-bottom:1px solid var(--border);
+      background:linear-gradient(90deg,rgba(15,23,42,0.98),rgba(15,23,42,0.9));
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .logo{display:flex;align-items:center;gap:10px;}
+    .logo-icon{
+      width:34px;height:34px;border-radius:50%;
+      border:2px solid var(--accent);
+      display:flex;align-items:center;justify-content:center;
+      box-shadow:0 0 18px rgba(34,211,238,0.7);
+      background:radial-gradient(circle,rgba(34,211,238,0.2),transparent);
+    }
+    .logo-icon i{color:var(--accent);font-size:16px}
+    .logo-text{display:flex;flex-direction:column;line-height:1.1}
+    .logo-title{font-size:16px;font-weight:700}
+    .logo-sub{font-size:11px;color:var(--muted)}
+    .header-right{display:flex;align-items:center;gap:8px;font-size:11px;}
+    .logout-btn{
+      border:none;
+      border-radius:999px;
+      padding:4px 10px;
+      font-size:11px;
+      background:#ef4444;
+      color:#fee2e2;
+      cursor:pointer;
+    }
+
+    main{max-width:1100px;margin:14px auto 20px;padding:0 10px;}
+
+    /* شاشة تسجيل الدخول */
+    #loginScreen{
+      max-width:420px;
+      margin:60px auto;
+      background:var(--card);
+      border-radius:16px;
+      border:1px solid var(--border);
+      padding:18px 16px;
+      text-align:center;
+      box-shadow:0 0 30px rgba(15,23,42,0.9);
+    }
+    #loginScreen h1{font-size:18px;margin-bottom:4px;}
+    #loginScreen p{font-size:12px;color:var(--muted);margin-bottom:12px;}
+    .login-input{
+      width:100%;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid rgba(51,65,85,0.95);
+      background:rgba(15,23,42,0.96);
+      color:var(--text);
+      font-size:13px;
+      margin-bottom:10px;
+    }
+    .login-btn{
+      width:100%;
+      padding:8px 10px;
+      border-radius:999px;
+      border:none;
+      background:linear-gradient(90deg,#22c55e,#16a34a);
+      color:#022c22;
+      font-size:13px;
+      cursor:pointer;
+      font-weight:600;
+      margin-bottom:6px;
+    }
+    #loginError{font-size:12px;color:#fecaca;min-height:16px;}
+
+    /* واجهة الأدمن */
+    #adminApp{display:none;}
+
+    .tabs{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-bottom:14px;
+    }
+    .tab-btn{
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(15,23,42,0.96);
+      color:var(--muted);
+      font-size:12px;
+      padding:6px 10px;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      gap:6px;
+    }
+    .tab-btn.active{
+      border-color:var(--accent);
+      color:var(--accent);
+      box-shadow:0 0 18px rgba(34,211,238,0.55);
+    }
+
+    .card{
+      background:var(--card);
+      border-radius:16px;
+      border:1px solid var(--border);
+      padding:14px 12px;
+      margin-bottom:12px;
+      font-size:13px;
+    }
+    .card h2{
+      font-size:15px;
+      margin-bottom:8px;
+      display:flex;
+      align-items:center;
+      gap:6px;
+    }
+    .card p{font-size:12px;color:var(--muted);margin-bottom:10px;}
+
+    label{font-size:12px;color:var(--muted);display:block;margin-bottom:4px;}
+    input[type="text"], select{
+      width:100%;
+      padding:7px 9px;
+      border-radius:10px;
+      border:1px solid rgba(51,65,85,0.95);
+      background:rgba(15,23,42,0.96);
+      color:var(--text);
+      font-size:13px;
+      margin-bottom:8px;
+    }
+    textarea{
+      width:100%;
+      padding:7px 9px;
+      border-radius:10px;
+      border:1px solid rgba(51,65,85,0.95);
+      background:rgba(15,23,42,0.96);
+      color:var(--text);
+      font-size:13px;
+      margin-bottom:8px;
+      min-height:80px;
+    }
+    .btn{
+      border:none;
+      border-radius:999px;
+      padding:7px 12px;
+      font-size:12px;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+    }
+    .btn-primary{
+      background:linear-gradient(90deg,#22d3ee,#0ea5e9);
+      color:#0b1120;
+    }
+    .btn-outline{
+      background:transparent;
+      border:1px solid var(--border);
+      color:var(--muted);
+    }
+    .btn-danger{
+      background:#b91c1c;
+      color:#fee2e2;
+    }
+    .small{font-size:11px;color:var(--muted);}
+
+    .resources-list{display:flex;flex-direction:column;gap:6px;margin-bottom:8px;}
+    .resource-row{
+      display:grid;
+      grid-template-columns:2fr 2fr auto;
+      gap:6px;
+      align-items:center;
+    }
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:4px;
+      padding:2px 6px;
+      border-radius:999px;
+      font-size:11px;
+      border:1px solid var(--border);
+      color:var(--muted);
+      margin-top:2px;
+    }
+    .tag.vip{border-color:var(--accent3);color:var(--accent3);}
+    .status-msg{font-size:12px;margin-top:6px;}
+    .status-ok{color:var(--success);}
+    .status-err{color:#fecaca;}
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon"><i class="fa-solid fa-bolt"></i></div>
+    <div class="logo-text">
+      <div class="logo-title">فن التكلوجيا الحديث</div>
+      <div class="logo-sub">لوحة تحكم الأدمن (Firebase)</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <span id="adminStatusText">غير مسجل دخول</span>
+    <button class="logout-btn" id="logoutBtn" style="display:none;">تسجيل خروج</button>
+  </div>
+</header>
+
+<main>
+
+  <!-- شاشة كلمة السر -->
+  <section id="loginScreen">
+    <h1>تسجيل دخول الأدمن</h1>
+    <p>ادخل كلمة السر الخاصة بلوحة التحكم.</p>
+    <input type="password" id="adminPassword" class="login-input" placeholder="كلمة السر">
+    <button class="login-btn" id="loginBtn">
+      <i class="fa-solid fa-lock-open"></i>
+      دخول
+    </button>
+    <div id="loginError"></div>
+    <div class="small" style="margin-top:8px;opacity:0.7;">
+      كلمة السر محفوظة مشفرة داخل الكود، ولا تظهر للمستخدمين العاديين.
+    </div>
+  </section>
+
+  <!-- واجهة الأدمن -->
+  <section id="adminApp">
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="addProduct"><i class="fa-solid fa-plus"></i> إضافة منتج</button>
+      <button class="tab-btn" data-tab="deleteProduct"><i class="fa-solid fa-trash"></i> حذف منتج</button>
+      <button class="tab-btn" data-tab="vipUsers"><i class="fa-solid fa-crown"></i> تفعيل حساب VIP</button>
+    </div>
+
+    <!-- إضافة منتج -->
+    <div class="card tab-panel" id="tab-addProduct">
+      <h2><i class="fa-solid fa-plus-circle"></i> إضافة منتج جديد</h2>
+      <p>كل منتج يمثل كورس أو حزمة ملفات. يمكن إضافة عدد لانهائي من الحقول (روابط مفتوحة أو VIP).</p>
+
+      <label>اسم المنتج</label>
+      <input type="text" id="pName" placeholder="مثال: دورة تصميم متجر إلكتروني">
+
+      <label>رابط صورة المنتج (1:1)</label>
+      <input type="text" id="pImage" placeholder="رابط صورة مربعة للكورس">
+
+      <label>التصنيف</label>
+      <input type="text" id="pCategory" value="course">
+
+      <div style="margin:6px 0 4px;font-size:12px;font-weight:600;">روابط المحتوى (عدد لا نهائي)</div>
+      <p class="small">كل سطر = حقل داخل صفحة الكورس (عنوان + رابط + نوع: مفتوح للجميع / VIP للمشترك فقط).</p>
+
+      <div class="resources-list" id="resourcesList"></div>
+      <button class="btn btn-outline" id="addResourceBtn">
+        <i class="fa-solid fa-link"></i> إضافة رابط
+      </button>
+
+      <div style="margin-top:10px;">
+        <button class="btn btn-primary" id="saveProductBtn">
+          <i class="fa-solid fa-floppy-disk"></i> حفظ المنتج
+        </button>
+      </div>
+      <div id="addStatus" class="status-msg"></div>
+    </div>
+
+    <!-- حذف منتج -->
+    <div class="card tab-panel" id="tab-deleteProduct" style="display:none;">
+      <h2><i class="fa-solid fa-trash-can"></i> حذف منتج</h2>
+      <p>أدخل رقم ID للمنتج (نفس الرقم الظاهر في المتجر أو في Firestore) ليتم حذفه.</p>
+      <label>ID المنتج</label>
+      <input type="text" id="delId" placeholder="مثال: 1">
+      <button class="btn btn-danger" id="deleteProductBtn">
+        <i class="fa-solid fa-trash"></i> حذف
+      </button>
+      <div id="deleteStatus" class="status-msg"></div>
+    </div>
+
+    <!-- تفعيل VIP -->
+    <div class="card tab-panel" id="tab-vipUsers" style="display:none;">
+      <h2><i class="fa-solid fa-crown"></i> تفعيل حساب مستخدم VIP</h2>
+      <p>اكتب ID المستخدم الموجود في المتجر، واختر مدة الاشتراك.</p>
+
+      <label>ID المستخدم</label>
+      <input type="text" id="vipUserId" placeholder="مثال: U123456">
+
+      <label>مدة الاشتراك</label>
+      <select id="vipDuration">
+        <option value="1">شهر واحد (5$)</option>
+        <option value="3">3 أشهر (10$)</option>
+      </select>
+
+      <button class="btn btn-primary" id="activateVipBtn">
+        <i class="fa-solid fa-toggle-on"></i> تفعيل / تحديث الاشتراك
+      </button>
+
+      <div id="vipStatus" class="status-msg"></div>
+
+      <div class="small" style="margin-top:8px;">
+        المتجر يقرأ من Collection باسم <strong>users</strong>  
+        ويعتمد الحقول: <code>isVip</code> و <code>vipUntil</code>.
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- Firebase v8 -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script>
+  // إعداد Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyDa_20ADHMOiUhueZL9PS3WHmA89fGLfhk",
+    authDomain: "mtgr-5feb9.firebaseapp.com",
+    projectId: "mtgr-5feb9",
+    storageBucket: "mtgr-5feb9.firebasestorage.app",
+    messagingSenderId: "1097780736802",
+    appId: "1:1097780736802:web:89ea173d277ce529a56b7b",
+    measurementId: "G-JWNEHDQ31F"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  // كلمة السر مشفرة Base64: "BbZzAaMm" => "QmJaekFhTW0="
+  const ADMIN_PASS_ENC = "QmJaekFhTW0=";
+
+  // عناصر DOM
+  const loginScreen = document.getElementById("loginScreen");
+  const adminApp    = document.getElementById("adminApp");
+  const loginBtn    = document.getElementById("loginBtn");
+  const loginError  = document.getElementById("loginError");
+  const passInput   = document.getElementById("adminPassword");
+  const adminStatus = document.getElementById("adminStatusText");
+  const logoutBtn   = document.getElementById("logoutBtn");
+
+  // تبويبات
+  const tabButtons = document.querySelectorAll(".tab-btn");
+  const tabPanels  = document.querySelectorAll(".tab-panel");
+
+  function showTab(id){
+    tabButtons.forEach(btn=>{
+      btn.classList.toggle("active", btn.dataset.tab === id);
+    });
+    tabPanels.forEach(panel=>{
+      panel.style.display = panel.id === "tab-"+id ? "block" : "none";
+    });
+  }
+
+  tabButtons.forEach(btn=>{
+    btn.addEventListener("click", () => {
+      showTab(btn.dataset.tab);
+    });
+  });
+
+  // تسجيل الدخول
+  function doLogin(){
+    const entered = passInput.value.trim();
+    const real = atob(ADMIN_PASS_ENC); // يرجع BbZzAaMm
+    if(entered === real){
+      localStorage.setItem("FTM_ADMIN_LOGGED","1");
+      loginScreen.style.display = "none";
+      adminApp.style.display = "block";
+      adminStatus.textContent = "مسجل دخول كأدمن";
+      logoutBtn.style.display = "inline-flex";
+      loginError.textContent = "";
+    }else{
+      loginError.textContent = "كلمة السر غير صحيحة.";
+    }
+  }
+
+  loginBtn.addEventListener("click", doLogin);
+  passInput.addEventListener("keyup", e=>{
+    if(e.key === "Enter") doLogin();
+  });
+
+  logoutBtn.addEventListener("click", ()=>{
+    localStorage.removeItem("FTM_ADMIN_LOGGED");
+    location.reload();
+  });
+
+  // فحص حالة الدخول عند فتح الصفحة
+  (function checkAdmin(){
+    if(localStorage.getItem("FTM_ADMIN_LOGGED") === "1"){
+      loginScreen.style.display = "none";
+      adminApp.style.display = "block";
+      adminStatus.textContent = "مسجل دخول كأدمن";
+      logoutBtn.style.display = "inline-flex";
+    }
+  })();
+
+  // ====== إضافة منتج ======
+  const resourcesList   = document.getElementById("resourcesList");
+  const addResourceBtn  = document.getElementById("addResourceBtn");
+  const saveProductBtn  = document.getElementById("saveProductBtn");
+  const addStatus       = document.getElementById("addStatus");
+
+  function addResourceRow(title="", url="", access="public"){
+    const row = document.createElement("div");
+    row.className = "resource-row";
+    row.innerHTML = `
+      <input type="text" placeholder="عنوان الرابط" value="${title}">
+      <input type="text" placeholder="رابط (فيديو / ملف / صفحة)" value="${url}">
+      <select>
+        <option value="public" ${access==="public"?"selected":""}>مفتوح</option>
+        <option value="vip" ${access==="vip"?"selected":""}>VIP</option>
+      </select>
+    `;
+    resourcesList.appendChild(row);
+  }
+
+  addResourceBtn.addEventListener("click", ()=>addResourceRow());
+
+  // سطر واحد افتراضي
+  addResourceRow();
+
+  async function getNextProductId(){
+    const snap = await db.collection("products").orderBy("id","desc").limit(1).get();
+    if(snap.empty) return 1;
+    const last = snap.docs[0].data().id || 0;
+    return last + 1;
+  }
+
+  saveProductBtn.addEventListener("click", async ()=>{
+    const title = document.getElementById("pName").value.trim();
+    const image = document.getElementById("pImage").value.trim();
+    const category = document.getElementById("pCategory").value.trim() || "course";
+
+    if(!title){
+      addStatus.textContent = "اكتب اسم المنتج.";
+      addStatus.className = "status-msg status-err";
+      return;
+    }
+
+    const rows = resourcesList.querySelectorAll(".resource-row");
+    const resources = [];
+    rows.forEach(row=>{
+      const [tInput,uInput,sel] = row.querySelectorAll("input,select");
+      const t = tInput.value.trim();
+      const u = uInput.value.trim();
+      const a = sel.value;
+      if(t && u){
+        resources.push({title:t,url:u,access:a});
+      }
+    });
+
+    if(!resources.length){
+      addStatus.textContent = "أضف على الأقل رابط واحد للمحتوى.";
+      addStatus.className = "status-msg status-err";
+      return;
+    }
+
+    const accessVip = resources.some(r=>r.access==="vip");
+
+    try{
+      const newId = await getNextProductId();
+      await db.collection("products").doc(String(newId)).set({
+        id:newId,
+        title,
+        image,
+        category,
+        resources,
+        accessVip,
+        createdAt:new Date().toISOString()
+      });
+
+      addStatus.textContent = `تم حفظ المنتج بنجاح. ID = ${newId}`;
+      addStatus.className = "status-msg status-ok";
+
+      // تنظيف الحقول
+      document.getElementById("pName").value = "";
+      document.getElementById("pImage").value = "";
+      document.getElementById("pCategory").value = "course";
+      resourcesList.innerHTML = "";
+      addResourceRow();
+    }catch(err){
+      console.error(err);
+      addStatus.textContent = "خطأ في الحفظ. تأكد من اتصالك بـ Firebase.";
+      addStatus.className = "status-msg status-err";
+    }
+  });
+
+  // ====== حذف منتج ======
+  const delIdInput    = document.getElementById("delId");
+  const deleteBtn     = document.getElementById("deleteProductBtn");
+  const deleteStatus  = document.getElementById("deleteStatus");
+
+  deleteBtn.addEventListener("click", async ()=>{
+    const id = delIdInput.value.trim();
+    if(!id){
+      deleteStatus.textContent = "اكتب ID المنتج.";
+      deleteStatus.className = "status-msg status-err";
+      return;
+    }
+    try{
+      await db.collection("products").doc(String(id)).delete();
+      deleteStatus.textContent = "تم حذف المنتج (إن وجد).";
+      deleteStatus.className = "status-msg status-ok";
+    }catch(err){
+      console.error(err);
+      deleteStatus.textContent = "خطأ أثناء الحذف.";
+      deleteStatus.className = "status-msg status-err";
+    }
+  });
+
+  // ====== تفعيل VIP للمستخدم ======
+  const vipUserIdInput = document.getElementById("vipUserId");
+  const vipDurationSel = document.getElementById("vipDuration");
+  const activateVipBtn = document.getElementById("activateVipBtn");
+  const vipStatus      = document.getElementById("vipStatus");
+
+  activateVipBtn.addEventListener("click", async ()=>{
+    const uid = vipUserIdInput.value.trim();
+    if(!uid){
+      vipStatus.textContent = "اكتب ID المستخدم.";
+      vipStatus.className = "status-msg status-err";
+      return;
+    }
+    const months = parseInt(vipDurationSel.value,10) || 1;
+    const now = new Date();
+    const until = new Date(now);
+    until.setMonth(until.getMonth()+months);
+
+    try{
+      await db.collection("users").doc(uid).set({
+        id:uid,
+        isVip:true,
+        vipUntil: until.toISOString()
+      }, {merge:true});
+
+      vipStatus.textContent = `تم تفعيل VIP لغاية: ${until.toLocaleDateString("ar-IQ")}`;
+      vipStatus.className = "status-msg status-ok";
+    }catch(err){
+      console.error(err);
+      vipStatus.textContent = "خطأ أثناء التفعيل.";
+      vipStatus.className = "status-msg status-err";
+    }
+  });
+</script>
+
+</body>
+</html>
