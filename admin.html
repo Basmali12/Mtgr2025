@@ -147,7 +147,7 @@
     .card p{font-size:12px;color:var(--muted);margin-bottom:10px;}
 
     label{font-size:12px;color:var(--muted);display:block;margin-bottom:4px;}
-    input[type="text"], input[type="password"], select{
+    input[type="text"], input[type="number"], select{
       width:100%;
       padding:7px 9px;
       border-radius:10px;
@@ -203,18 +203,6 @@
     .status-msg{font-size:12px;margin-top:6px;}
     .status-ok{color:var(--success);}
     .status-err{color:#fecaca;}
-
-    .toggle-row{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      margin-bottom:8px;
-      font-size:13px;
-    }
-    .toggle-row input[type="checkbox"]{
-      width:18px;
-      height:18px;
-    }
   </style>
 </head>
 
@@ -258,7 +246,7 @@
       <button class="tab-btn" data-tab="editProduct"><i class="fa-solid fa-pen-to-square"></i> تعديل منتج</button>
       <button class="tab-btn" data-tab="deleteProduct"><i class="fa-solid fa-trash"></i> حذف منتج</button>
       <button class="tab-btn" data-tab="vipUsers"><i class="fa-solid fa-crown"></i> تفعيل حساب VIP</button>
-      <button class="tab-btn" data-tab="welcomeCfg"><i class="fa-solid fa-bullhorn"></i> إعداد إعلان الترحيب</button>
+      <button class="tab-btn" data-tab="welcome"><i class="fa-solid fa-bullhorn"></i> إعداد إعلان الترحيب</button>
     </div>
 
     <!-- إضافة منتج -->
@@ -273,7 +261,14 @@
       <input type="text" id="pImage" placeholder="رابط صورة مربعة للكورس">
 
       <label>التصنيف</label>
-      <input type="text" id="pCategory" value="course">
+      <select id="pCategory">
+        <option value="course">كورس تعليمي</option>
+        <option value="app">تطبيق / برنامج</option>
+        <option value="script">سكربت / كود</option>
+        <option value="template">قالب جاهز</option>
+        <option value="tool">أداة تكنولوجية</option>
+        <option value="server">سيرفرات / IPTV</option>
+      </select>
 
       <div style="margin:6px 0 4px;font-size:12px;font-weight:600;">روابط المحتوى (عدد لا نهائي)</div>
       <p class="small">كل سطر = حقل داخل صفحة الكورس (عنوان + رابط + نوع: مفتوح للجميع / VIP للمشترك فقط).</p>
@@ -294,37 +289,45 @@
     <!-- تعديل منتج -->
     <div class="card tab-panel" id="tab-editProduct" style="display:none;">
       <h2><i class="fa-solid fa-pen-to-square"></i> تعديل منتج موجود</h2>
-      <p>أدخل ID المنتج واضغط "تحميل" لجلب البيانات، ثم عدّل و اضغط "حفظ التعديلات".</p>
+      <p>أدخل ID المنتج الموجود في المتجر ليتم جلب بياناته وتعديلها.</p>
 
       <label>ID المنتج</label>
-      <input type="text" id="editId" placeholder="مثال: 1">
+      <input type="number" id="editId" placeholder="مثال: 1">
+
       <button class="btn btn-outline" id="loadProductBtn">
-        <i class="fa-solid fa-download"></i> تحميل بيانات المنتج
+        <i class="fa-solid fa-magnifying-glass"></i> جلب بيانات المنتج
       </button>
 
-      <hr style="border:none;border-top:1px solid rgba(55,65,81,0.8);margin:10px 0;">
+      <div id="editArea" style="margin-top:10px;display:none;">
+        <label>اسم المنتج</label>
+        <input type="text" id="editName">
 
-      <label>اسم المنتج</label>
-      <input type="text" id="editName" placeholder="اسم المنتج">
+        <label>رابط صورة المنتج (1:1)</label>
+        <input type="text" id="editImage">
 
-      <label>رابط صورة المنتج (1:1)</label>
-      <input type="text" id="editImage" placeholder="رابط صورة مربعة">
+        <label>التصنيف</label>
+        <select id="editCategory">
+          <option value="course">كورس تعليمي</option>
+          <option value="app">تطبيق / برنامج</option>
+          <option value="script">سكربت / كود</option>
+          <option value="template">قالب جاهز</option>
+          <option value="tool">أداة تكنولوجية</option>
+          <option value="server">سيرفرات / IPTV</option>
+        </select>
 
-      <label>التصنيف</label>
-      <input type="text" id="editCategory" placeholder="مثال: course / app / script">
+        <div style="margin:6px 0 4px;font-size:12px;font-weight:600;">روابط المحتوى</div>
+        <div class="small">يمكن التعديل على العناوين، الروابط، ونوع الوصول (مفتوح / VIP).</div>
 
-      <div style="margin:6px 0 4px;font-size:12px;font-weight:600;">روابط المحتوى</div>
-      <p class="small">يمكنك تعديل العناوين والروابط ونوع الوصول لكل حقل.</p>
-
-      <div class="resources-list" id="editResourcesList"></div>
-      <button class="btn btn-outline" id="editAddResourceBtn">
-        <i class="fa-solid fa-link"></i> إضافة رابط جديد
-      </button>
-
-      <div style="margin-top:10px;">
-        <button class="btn btn-primary" id="saveEditBtn">
-          <i class="fa-solid fa-save"></i> حفظ التعديلات
+        <div class="resources-list" id="editResourcesList"></div>
+        <button class="btn btn-outline" id="editAddResourceBtn">
+          <i class="fa-solid fa-link"></i> إضافة رابط جديد
         </button>
+
+        <div style="margin-top:10px;">
+          <button class="btn btn-primary" id="updateProductBtn">
+            <i class="fa-solid fa-floppy-disk"></i> حفظ التعديلات
+          </button>
+        </div>
       </div>
       <div id="editStatus" class="status-msg"></div>
     </div>
@@ -332,9 +335,9 @@
     <!-- حذف منتج -->
     <div class="card tab-panel" id="tab-deleteProduct" style="display:none;">
       <h2><i class="fa-solid fa-trash-can"></i> حذف منتج</h2>
-      <p>أدخل رقم ID للمنتج (نفس الرقم الظاهر في المتجر أو في Firestore) ليتم حذفه.</p>
+      <p>أدخل رقم ID للمنتج (نفس الرقم الظاهر في المتجر) ليتم حذفه.</p>
       <label>ID المنتج</label>
-      <input type="text" id="delId" placeholder="مثال: 1">
+      <input type="number" id="delId" placeholder="مثال: 1">
       <button class="btn btn-danger" id="deleteProductBtn">
         <i class="fa-solid fa-trash"></i> حذف
       </button>
@@ -360,36 +363,27 @@
       </button>
 
       <div id="vipStatus" class="status-msg"></div>
-
-      <div class="small" style="margin-top:8px;">
-        المتجر يقرأ من Collection باسم <strong>users</strong>  
-        ويعتمد الحقول: <code>isVip</code> و <code>vipUntil</code>.
-      </div>
     </div>
 
     <!-- إعداد إعلان الترحيب -->
-    <div class="card tab-panel" id="tab-welcomeCfg" style="display:none;">
+    <div class="card tab-panel" id="tab-welcome" style="display:none;">
       <h2><i class="fa-solid fa-bullhorn"></i> إعداد إعلان الترحيب</h2>
-      <p>هذا الإعلان يظهر للمستخدم أول ما يفتح المتجر، ويمكن تخطيه بزر (تخطي).</p>
+      <p>هذا النص يظهر للمستخدم أول مرة يفتح المتجر، مع زر "تخطي".</p>
 
-      <div class="toggle-row">
-        <input type="checkbox" id="welcomeEnabled">
-        <label for="welcomeEnabled">تفعيل إعلان الترحيب</label>
-      </div>
+      <label>تفعيل إعلان الترحيب</label>
+      <select id="welcomeEnabled">
+        <option value="false">معطّل</option>
+        <option value="true">مفعّل</option>
+      </select>
 
       <label>نص الإعلان</label>
-      <textarea id="welcomeText" placeholder="اكتب الرسالة التي تريد عرضها للمستخدمين..."></textarea>
+      <textarea id="welcomeText" placeholder="اكتب هنا نص الترحيب أو العرض الخاص..."></textarea>
 
       <button class="btn btn-primary" id="saveWelcomeBtn">
         <i class="fa-solid fa-floppy-disk"></i> حفظ إعدادات الإعلان
       </button>
 
       <div id="welcomeStatus" class="status-msg"></div>
-
-      <div class="small" style="margin-top:8px;">
-        يتم الحفظ في Collection باسم <strong>config</strong> و Document باسم <strong>store</strong>  
-        بنفس الحقول: <code>welcomeEnabled</code> و <code>welcomeText</code>.
-      </div>
     </div>
   </section>
 
@@ -416,7 +410,6 @@
   // كلمة السر مشفرة Base64: "BbZzAaMm" => "QmJaekFhTW0="
   const ADMIN_PASS_ENC = "QmJaekFhTW0=";
 
-  // عناصر DOM
   const loginScreen = document.getElementById("loginScreen");
   const adminApp    = document.getElementById("adminApp");
   const loginBtn    = document.getElementById("loginBtn");
@@ -425,7 +418,6 @@
   const adminStatus = document.getElementById("adminStatusText");
   const logoutBtn   = document.getElementById("logoutBtn");
 
-  // تبويبات
   const tabButtons = document.querySelectorAll(".tab-btn");
   const tabPanels  = document.querySelectorAll(".tab-panel");
 
@@ -439,15 +431,12 @@
   }
 
   tabButtons.forEach(btn=>{
-    btn.addEventListener("click", () => {
-      showTab(btn.dataset.tab);
-    });
+    btn.addEventListener("click", () => showTab(btn.dataset.tab));
   });
 
-  // تسجيل الدخول
   function doLogin(){
     const entered = passInput.value.trim();
-    const real = atob(ADMIN_PASS_ENC); // يرجع BbZzAaMm
+    const real = atob(ADMIN_PASS_ENC);
     if(entered === real){
       localStorage.setItem("FTM_ADMIN_LOGGED","1");
       loginScreen.style.display = "none";
@@ -455,7 +444,6 @@
       adminStatus.textContent = "مسجل دخول كأدمن";
       logoutBtn.style.display = "inline-flex";
       loginError.textContent = "";
-      initAdmin();
     }else{
       loginError.textContent = "كلمة السر غير صحيحة.";
     }
@@ -471,24 +459,22 @@
     location.reload();
   });
 
-  // فحص حالة الدخول عند فتح الصفحة
   (function checkAdmin(){
     if(localStorage.getItem("FTM_ADMIN_LOGGED") === "1"){
       loginScreen.style.display = "none";
       adminApp.style.display = "block";
       adminStatus.textContent = "مسجل دخول كأدمن";
       logoutBtn.style.display = "inline-flex";
-      initAdmin();
     }
   })();
 
-  // ====== عناصر إضافة منتج ======
+  // ===== إضافة منتج =====
   const resourcesList   = document.getElementById("resourcesList");
   const addResourceBtn  = document.getElementById("addResourceBtn");
   const saveProductBtn  = document.getElementById("saveProductBtn");
   const addStatus       = document.getElementById("addStatus");
 
-  function addResourceRow(title="", url="", access="public"){
+  function addResourceRow(parentList, title="", url="", access="public"){
     const row = document.createElement("div");
     row.className = "resource-row";
     row.innerHTML = `
@@ -499,13 +485,11 @@
         <option value="vip" ${access==="vip"?"selected":""}>VIP</option>
       </select>
     `;
-    resourcesList.appendChild(row);
+    parentList.appendChild(row);
   }
 
-  addResourceBtn.addEventListener("click", ()=>addResourceRow());
-
-  // سطر افتراضي يظهر دائماً
-  addResourceRow();
+  addResourceBtn.addEventListener("click", ()=>addResourceRow(resourcesList));
+  addResourceRow(resourcesList); // واحد افتراضي
 
   async function getNextProductId(){
     const snap = await db.collection("products").orderBy("id","desc").limit(1).get();
@@ -517,7 +501,7 @@
   saveProductBtn.addEventListener("click", async ()=>{
     const title = document.getElementById("pName").value.trim();
     const image = document.getElementById("pImage").value.trim();
-    const category = document.getElementById("pCategory").value.trim() || "course";
+    const category = document.getElementById("pCategory").value || "course";
 
     if(!title){
       addStatus.textContent = "اكتب اسم المنتج.";
@@ -560,12 +544,11 @@
       addStatus.textContent = `تم حفظ المنتج بنجاح. ID = ${newId}`;
       addStatus.className = "status-msg status-ok";
 
-      // تنظيف الحقول
       document.getElementById("pName").value = "";
       document.getElementById("pImage").value = "";
       document.getElementById("pCategory").value = "course";
       resourcesList.innerHTML = "";
-      addResourceRow();
+      addResourceRow(resourcesList);
     }catch(err){
       console.error(err);
       addStatus.textContent = "خطأ في الحفظ. تأكد من اتصالك بـ Firebase.";
@@ -573,87 +556,74 @@
     }
   });
 
-  // ====== عناصر تعديل منتج ======
+  // ===== تعديل منتج =====
   const editIdInput        = document.getElementById("editId");
   const loadProductBtn     = document.getElementById("loadProductBtn");
+  const editArea           = document.getElementById("editArea");
   const editNameInput      = document.getElementById("editName");
   const editImageInput     = document.getElementById("editImage");
-  const editCategoryInput  = document.getElementById("editCategory");
+  const editCategorySelect = document.getElementById("editCategory");
   const editResourcesList  = document.getElementById("editResourcesList");
   const editAddResourceBtn = document.getElementById("editAddResourceBtn");
-  const saveEditBtn        = document.getElementById("saveEditBtn");
+  const updateProductBtn   = document.getElementById("updateProductBtn");
   const editStatus         = document.getElementById("editStatus");
 
-  function addEditResourceRow(title="", url="", access="public"){
-    const row = document.createElement("div");
-    row.className = "resource-row";
-    row.innerHTML = `
-      <input type="text" placeholder="عنوان الرابط" value="${title}">
-      <input type="text" placeholder="رابط (فيديو / ملف / صفحة)" value="${url}">
-      <select>
-        <option value="public" ${access==="public"?"selected":""}>مفتوح</option>
-        <option value="vip" ${access==="vip"?"selected":""}>VIP</option>
-      </select>
-    `;
-    editResourcesList.appendChild(row);
-  }
-
-  editAddResourceBtn.addEventListener("click", ()=>addEditResourceRow());
-
-  // سطر افتراضي بقسم التعديل
-  addEditResourceRow();
-
   loadProductBtn.addEventListener("click", async ()=>{
-    const id = editIdInput.value.trim();
-    if(!id){
-      editStatus.textContent = "اكتب ID المنتج أولاً.";
-      editStatus.className = "status-msg status-err";
-      return;
-    }
-    try{
-      const ref = db.collection("products").doc(String(id));
-      const snap = await ref.get();
-      if(!snap.exists){
-        editStatus.textContent = "لم يتم العثور على منتج بهذا ID.";
-        editStatus.className = "status-msg status-err";
-        return;
-      }
-      const data = snap.data();
-      editNameInput.value     = data.title || "";
-      editImageInput.value    = data.image || "";
-      editCategoryInput.value = data.category || "";
-
-      editResourcesList.innerHTML = "";
-      if(Array.isArray(data.resources) && data.resources.length){
-        data.resources.forEach(r=>{
-          addEditResourceRow(r.title || "", r.url || "", r.access || "public");
-        });
-      }else{
-        addEditResourceRow();
-      }
-
-      editStatus.textContent = "تم تحميل بيانات المنتج. عدل ثم احفظ.";
-      editStatus.className   = "status-msg status-ok";
-    }catch(err){
-      console.error(err);
-      editStatus.textContent = "خطأ أثناء تحميل المنتج.";
-      editStatus.className = "status-msg status-err";
-    }
-  });
-
-  saveEditBtn.addEventListener("click", async ()=>{
     const id = editIdInput.value.trim();
     if(!id){
       editStatus.textContent = "اكتب ID المنتج.";
       editStatus.className = "status-msg status-err";
       return;
     }
-    const title    = editNameInput.value.trim();
-    const image    = editImageInput.value.trim();
-    const category = editCategoryInput.value.trim() || "course";
+    try{
+      const doc = await db.collection("products").doc(String(id)).get();
+      if(!doc.exists){
+        editStatus.textContent = "المنتج غير موجود.";
+        editStatus.className = "status-msg status-err";
+        editArea.style.display = "none";
+        return;
+      }
+      const data = doc.data();
+      editNameInput.value  = data.title || "";
+      editImageInput.value = data.image || "";
+      editCategorySelect.value = data.category || "course";
+
+      editResourcesList.innerHTML = "";
+      if(Array.isArray(data.resources) && data.resources.length){
+        data.resources.forEach(r=>{
+          addResourceRow(editResourcesList, r.title || "", r.url || "", r.access || "public");
+        });
+      }else{
+        addResourceRow(editResourcesList);
+      }
+
+      editArea.style.display = "block";
+      editStatus.textContent = "";
+    }catch(err){
+      console.error(err);
+      editStatus.textContent = "خطأ أثناء جلب البيانات.";
+      editStatus.className = "status-msg status-err";
+    }
+  });
+
+  editAddResourceBtn.addEventListener("click", ()=>{
+    addResourceRow(editResourcesList);
+  });
+
+  updateProductBtn.addEventListener("click", async ()=>{
+    const id = editIdInput.value.trim();
+    if(!id){
+      editStatus.textContent = "ID غير موجود.";
+      editStatus.className = "status-msg status-err";
+      return;
+    }
+
+    const title = editNameInput.value.trim();
+    const image = editImageInput.value.trim();
+    const category = editCategorySelect.value || "course";
 
     if(!title){
-      editStatus.textContent = "اسم المنتج مطلوب.";
+      editStatus.textContent = "اسم المنتج فارغ.";
       editStatus.className = "status-msg status-err";
       return;
     }
@@ -670,41 +640,28 @@
       }
     });
 
-    if(!resources.length){
-      editStatus.textContent = "أضف على الأقل رابط واحد.";
-      editStatus.className = "status-msg status-err";
-      return;
-    }
-
     const accessVip = resources.some(r=>r.access==="vip");
 
     try{
-      const ref  = db.collection("products").doc(String(id));
-      const snap = await ref.get();
-      const old  = snap.exists ? snap.data() : {};
-
-      await ref.set({
-        id: Number(id),
+      await db.collection("products").doc(String(id)).set({
+        id:Number(id),
         title,
         image,
         category,
         resources,
-        accessVip,
-        ratingSum:  typeof old.ratingSum  === "number" ? old.ratingSum  : 0,
-        ratingCount:typeof old.ratingCount=== "number" ? old.ratingCount: 0,
-        createdAt: old.createdAt || new Date().toISOString()
+        accessVip
       }, {merge:true});
 
-      editStatus.textContent = "تم حفظ التعديلات بنجاح.";
-      editStatus.className   = "status-msg status-ok";
+      editStatus.textContent = "تم حفظ التعديلات.";
+      editStatus.className = "status-msg status-ok";
     }catch(err){
       console.error(err);
-      editStatus.textContent = "خطأ أثناء حفظ التعديل.";
+      editStatus.textContent = "خطأ أثناء الحفظ.";
       editStatus.className = "status-msg status-err";
     }
   });
 
-  // ====== حذف منتج ======
+  // ===== حذف منتج =====
   const delIdInput    = document.getElementById("delId");
   const deleteBtn     = document.getElementById("deleteProductBtn");
   const deleteStatus  = document.getElementById("deleteStatus");
@@ -727,7 +684,7 @@
     }
   });
 
-  // ====== تفعيل VIP للمستخدم ======
+  // ===== تفعيل VIP =====
   const vipUserIdInput = document.getElementById("vipUserId");
   const vipDurationSel = document.getElementById("vipDuration");
   const activateVipBtn = document.getElementById("activateVipBtn");
@@ -761,60 +718,43 @@
     }
   });
 
-  // ====== إعداد إعلان الترحيب ======
-  const welcomeEnabledInput = document.getElementById("welcomeEnabled");
-  const welcomeTextInput    = document.getElementById("welcomeText");
-  const saveWelcomeBtn      = document.getElementById("saveWelcomeBtn");
-  const welcomeStatus       = document.getElementById("welcomeStatus");
+  // ===== إعداد إعلان الترحيب =====
+  const welcomeEnabledSel = document.getElementById("welcomeEnabled");
+  const welcomeTextArea   = document.getElementById("welcomeText");
+  const welcomeStatus     = document.getElementById("welcomeStatus");
+  const saveWelcomeBtn    = document.getElementById("saveWelcomeBtn");
 
   async function loadWelcomeConfig(){
     try{
-      const ref  = db.collection("config").doc("store");
-      const snap = await ref.get();
-      if(!snap.exists){
-        welcomeEnabledInput.checked = false;
-        welcomeTextInput.value      = "";
-        return;
+      const doc = await db.collection("config").doc("store").get();
+      if(doc.exists){
+        const d = doc.data();
+        welcomeEnabledSel.value = String(!!d.welcomeEnabled);
+        welcomeTextArea.value   = d.welcomeText || "";
       }
-      const data = snap.data();
-      welcomeEnabledInput.checked = !!data.welcomeEnabled;
-      welcomeTextInput.value      = data.welcomeText || "";
     }catch(err){
       console.error(err);
-      welcomeStatus.textContent = "تعذر تحميل إعداد الإعلان.";
-      welcomeStatus.className   = "status-msg status-err";
     }
   }
 
   saveWelcomeBtn.addEventListener("click", async ()=>{
-    const enabled = welcomeEnabledInput.checked;
-    const text    = welcomeTextInput.value.trim();
-
-    if(enabled && !text){
-      welcomeStatus.textContent = "اكتب نص الإعلان قبل التفعيل.";
-      welcomeStatus.className   = "status-msg status-err";
-      return;
-    }
+    const enabled = welcomeEnabledSel.value === "true";
+    const text    = welcomeTextArea.value.trim();
     try{
       await db.collection("config").doc("store").set({
         welcomeEnabled: enabled,
         welcomeText: text
       }, {merge:true});
-
       welcomeStatus.textContent = "تم حفظ إعدادات الإعلان.";
-      welcomeStatus.className   = "status-msg status-ok";
+      welcomeStatus.className = "status-msg status-ok";
     }catch(err){
       console.error(err);
-      welcomeStatus.textContent = "خطأ أثناء حفظ الإعدادات.";
-      welcomeStatus.className   = "status-msg status-err";
+      welcomeStatus.textContent = "خطأ أثناء الحفظ.";
+      welcomeStatus.className = "status-msg status-err";
     }
   });
 
-  // ====== تهيئة واجهة الأدمن بعد تسجيل الدخول ======
-  function initAdmin(){
-    // تحميل إعداد إعلان الترحيب
-    loadWelcomeConfig();
-  }
+  loadWelcomeConfig();
 </script>
 
 </body>
