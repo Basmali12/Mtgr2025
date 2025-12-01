@@ -258,7 +258,7 @@
       <input type="text" id="pName" placeholder="مثال: دورة تصميم متجر إلكتروني">
 
       <label>رابط صورة المنتج (1:1)</label>
-      <input type="text" id="pImage" placeholder="رابط صورة مربعة للكورس">
+      <input type="text" id="pImage" placeholder="رابط صورة مربعة للكورس من Google Drive أو أي موقع آخر">
 
       <label>التصنيف</label>
       <select id="pCategory">
@@ -410,6 +410,35 @@
   // كلمة السر مشفرة Base64: "BbZzAaMm" => "QmJaekFhTW0="
   const ADMIN_PASS_ENC = "QmJaekFhTW0=";
 
+  // 🔹 دالة تحويل رابط Google Drive إلى رابط صورة صالح (thumbnail)
+  function normalizeDriveImageUrl(url){
+    if(!url) return "";
+    try{
+      if(url.includes("drive.google.com/thumbnail")) return url;
+
+      let fileId = null;
+
+      // شكل: .../file/d/FILE_ID/view
+      if(url.includes("/d/")){
+        const m = url.match(/\/d\/([^/]+)/);
+        if(m && m[1]) fileId = m[1];
+      }
+
+      // شكل: ...id=FILE_ID
+      if(!fileId && url.includes("id=")){
+        const m2 = url.match(/[?&]id=([^&]+)/);
+        if(m2 && m2[1]) fileId = m2[1];
+      }
+
+      if(fileId){
+        return "https://drive.google.com/thumbnail?id=" + fileId + "&sz=w1000";
+      }
+      return url;
+    }catch(e){
+      return url;
+    }
+  }
+
   const loginScreen = document.getElementById("loginScreen");
   const adminApp    = document.getElementById("adminApp");
   const loginBtn    = document.getElementById("loginBtn");
@@ -500,7 +529,7 @@
 
   saveProductBtn.addEventListener("click", async ()=>{
     const title = document.getElementById("pName").value.trim();
-    const image = document.getElementById("pImage").value.trim();
+    let image   = document.getElementById("pImage").value.trim();
     const category = document.getElementById("pCategory").value || "course";
 
     if(!title){
@@ -508,6 +537,9 @@
       addStatus.className = "status-msg status-err";
       return;
     }
+
+    // 🔹 تحويل رابط صورة درايف إلى thumbnail قبل الحفظ
+    image = normalizeDriveImageUrl(image);
 
     const rows = resourcesList.querySelectorAll(".resource-row");
     const resources = [];
@@ -573,6 +605,7 @@
     if(!id){
       editStatus.textContent = "اكتب ID المنتج.";
       editStatus.className = "status-msg status-err";
+      editArea.style.display = "none";
       return;
     }
     try{
@@ -619,7 +652,7 @@
     }
 
     const title = editNameInput.value.trim();
-    const image = editImageInput.value.trim();
+    let image   = editImageInput.value.trim();
     const category = editCategorySelect.value || "course";
 
     if(!title){
@@ -627,6 +660,9 @@
       editStatus.className = "status-msg status-err";
       return;
     }
+
+    // 🔹 تحويل رابط صورة درايف إذا لزم
+    image = normalizeDriveImageUrl(image);
 
     const rows = editResourcesList.querySelectorAll(".resource-row");
     const resources = [];
