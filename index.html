@@ -475,6 +475,17 @@
       margin-top:6px;
     }
 
+    .inline-play-btn{
+      border-radius:999px;
+      border:none;
+      padding:4px 8px;
+      font-size:11px;
+      cursor:pointer;
+      background:#0ea5e9;
+      color:#0f172a;
+      margin-inline-end:4px;
+    }
+
     .seo-footer{
       font-size:10px;
       color:var(--muted);
@@ -483,13 +494,11 @@
       padding:0 4px 8px;
     }
 
-    /* فهرس المنتجات */
     #coursesIndex{
       margin-top:14px;
       font-size:12px;
     }
 
-    /* نافذة حسابي */
     .account-modal{
       position:fixed;
       inset:0;
@@ -547,7 +556,6 @@
       cursor:pointer;
     }
 
-    /* إعلان ترحيبي قابل للتخطي */
     #welcomeAdWrapper{
       position:fixed;
       inset:0;
@@ -685,7 +693,6 @@
 
   <section class="products-grid" id="productsGrid"></section>
 
-  <!-- فهرس المنتجات للتصدر في البحث -->
   <section id="coursesIndex">
     <h2 style="font-size:13px;margin-bottom:6px;">فهرس جميع المنتجات والتصنيفات</h2>
     <ul id="coursesIndexList" style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:4px;"></ul>
@@ -697,7 +704,7 @@
 
 </main>
 
-<!-- إعلان ترحيبي قابل للتخطي -->
+<!-- إعلان ترحيبي -->
 <div id="welcomeAdWrapper">
   <div id="welcomeAdBackdrop"></div>
   <div id="welcomeAdBox">
@@ -771,7 +778,7 @@
   </div>
 </div>
 
-<!-- Firebase v8 -->
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
@@ -790,7 +797,7 @@
 
   const WHATSAPP_NUMBER = "9647729373260";
 
-  // 🔹 نفس الدالة اللي جربناها على الكود الصغير
+  // تحسين سرعة الصور: استخدام thumbnail أصغر من Google Drive
   function normalizeDriveImageUrl(url){
     if(!url) return "";
     try{
@@ -809,12 +816,68 @@
       }
 
       if(fileId){
-        return "https://drive.google.com/thumbnail?id="+fileId+"&sz=w1000";
+        // حجم متوسط لسرعة أعلى وجودة كافية
+        return "https://drive.google.com/thumbnail?id="+fileId+"&sz=w800";
       }
       return url;
     }catch(e){
       return url;
     }
+  }
+
+  // كشف أن الرابط فيديو (يوتيوب / درايف / mp4...)
+  function isVideoUrl(url){
+    if(!url) return false;
+    const u = url.toLowerCase();
+    if (u.includes("youtube.com") || u.includes("youtu.be")) return true;
+    if (u.includes("drive.google.com")) return true;
+    return u.endsWith(".mp4") || u.endsWith(".webm") || u.endsWith(".ogg");
+  }
+
+  // إنشاء عنصر الفيديو (iframe أو video)
+  function buildVideoElement(url, poster){
+    if(!url) return "";
+
+    const u = url.toLowerCase();
+
+    // Google Drive
+    if(u.includes("drive.google.com")){
+      let fileId = null;
+      try{
+        if(url.includes("/d/")){
+          const m = url.match(/\/d\/([^/]+)/);
+          if(m && m[1]) fileId = m[1];
+        }
+        if(!fileId && url.includes("id=")){
+          const m2 = url.match(/[?&]id=([^&]+)/);
+          if(m2 && m2[1]) fileId = m2[1];
+        }
+      }catch(e){}
+      if(!fileId) return '<a href="'+url+'" target="_blank">فتح الفيديو</a>';
+      const embed = "https://drive.google.com/file/d/"+fileId+"/preview";
+      return '<iframe src="'+embed+'" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>';
+    }
+
+    // YouTube
+    if(u.includes("youtube.com") || u.includes("youtu.be")){
+      let videoId = "";
+      try{
+        if(u.includes("youtube.com")){
+          const params = new URL(url).searchParams;
+          videoId = params.get("v") || "";
+        }else{
+          const parts = url.split("/");
+          videoId = parts[parts.length - 1];
+        }
+      }catch(e){}
+      if(!videoId) return '<a href="'+url+'" target="_blank">فتح الفيديو</a>';
+      const embed = "https://www.youtube.com/embed/" + videoId;
+      return '<iframe src="'+embed+'" frameborder="0" allowfullscreen></iframe>';
+    }
+
+    // ملفات mp4 مباشرة
+    const posterAttr = poster ? ' poster="'+poster+'"' : "";
+    return '<video controls src="'+url+'"'+posterAttr+'></video>';
   }
 
   let currentUserId = null;
@@ -1039,6 +1102,7 @@
   });
 
   async function loadProducts(){
+    // ممكن لاحقاً نضيف limit لو صار عدد المنتجات كبير
     const snap = await db.collection("products").orderBy("id","asc").get();
     products = [];
     snap.forEach(docSnap => {
@@ -1056,28 +1120,32 @@
     }
   }
 
+  // فلترة الكورسات حسب accessVip
   function renderProducts(){
     productsGrid.innerHTML = "";
+
     const filtered = products.filter(p => {
+      // فلترة البحث
       if(searchTerm){
         const t = (p.title || "").toLowerCase();
         const c = (p.category || "").toLowerCase();
         if(!t.includes(searchTerm) && !c.includes(searchTerm)) return false;
       }
+
+      // فلترة التبويب
       if(currentFilter === "public"){
-        return Array.isArray(p.resources) && p.resources.some(r => r.access === "public");
+        return !p.accessVip;      // مفتوح فقط
       }
       if(currentFilter === "vip"){
-        return Array.isArray(p.resources) && p.resources.some(r => r.access === "vip");
+        return !!p.accessVip;     // VIP فقط
       }
-      return true;
+      return true;                // الكل
     });
 
     filtered.forEach(p => {
       const card = document.createElement("article");
       card.className = "product-card" + (p.accessVip ? " vip" : "");
 
-      // 🔹 نستخدم دالة التحويل هنا
       const imgUrlRaw = p.image || "";
       const imgUrl    = normalizeDriveImageUrl(imgUrlRaw);
 
@@ -1099,7 +1167,7 @@
 
       card.innerHTML = `
         <div class="product-image-box">
-          ${imgUrl ? `<img src="${imgUrl}" alt="">` : ""}
+          ${imgUrl ? `<img loading="lazy" src="${imgUrl}" alt="">` : ""}
         </div>
         <div class="product-title">${p.title || "منتج بدون عنوان"}</div>
         ${ratingHtml}
@@ -1189,34 +1257,7 @@
     });
   });
 
-  function isVideoUrl(url){
-    if(!url) return false;
-    const u = url.toLowerCase();
-    return u.includes("youtube.com") || u.includes("youtu.be") ||
-           u.endsWith(".mp4") || u.endsWith(".webm") || u.endsWith(".ogg");
-  }
-
-  function buildVideoElement(url, poster){
-    if(url.includes("youtube.com") || url.includes("youtu.be")){
-      let videoId = "";
-      try{
-        if(url.includes("youtube.com")){
-          const params = new URL(url).searchParams;
-          videoId = params.get("v") || "";
-        }else{
-          const parts = url.split("/");
-          videoId = parts[parts.length - 1];
-        }
-      }catch(e){}
-      if(!videoId) return `<a href="${url}" target="_blank">فتح الفيديو</a>`;
-      const embed = "https://www.youtube.com/embed/" + videoId;
-      return `<iframe src="${embed}" frameborder="0" allowfullscreen></iframe>`;
-    }else{
-      const posterAttr = poster ? ` poster="${poster}"` : "";
-      return `<video controls src="${url}"${posterAttr}></video>`;
-    }
-  }
-
+  // فتح الكورس + تشغيل الفيديو داخل الصفحة
   function openCourse(product){
     overlay.classList.add("active");
     courseTitleHead.textContent = product.title || "";
@@ -1233,56 +1274,92 @@
     const now = new Date();
     const activeVip = isVip && vipUntil && vipUntil > now;
 
+    const poster = normalizeDriveImageUrl(product.image || "");
+
+    function setPreview(url){
+      if(!url) return;
+      coursePreview.innerHTML = buildVideoElement(url, poster);
+      coursePreview.style.display = "block";
+    }
+
     if(Array.isArray(product.resources)){
       product.resources.forEach((r, index) => {
         const isVid = isVideoUrl(r.url);
         const title = r.title || ("عنصر " + (index+1));
 
+        // أول فيديو متاح يشتغل تلقائياً كمعاينة
         if(isVid && !previewSet && ((r.access !== "vip") || (r.access === "vip" && activeVip))){
-          // 🔹 نستخدم صورة المنتج بعد التحويل بوستر للفيديو
-          const poster = normalizeDriveImageUrl(product.image || "");
-          coursePreview.innerHTML = buildVideoElement(r.url, poster);
-          coursePreview.style.display = "block";
+          setPreview(r.url);
           previewSet = true;
-          return;
         }
 
+        // VIP
         if(r.access === "vip"){
           anyVip = true;
           const item = document.createElement("div");
           item.className = "field-item";
+          let actionsHtml = "";
+
+          if(activeVip){
+            if(isVid){
+              actionsHtml = `
+                <button class="inline-play-btn">تشغيل داخل الصفحة</button>
+                <a href="${r.url}" target="_blank">فتح الفيديو</a>
+              `;
+            }else{
+              actionsHtml = `<a href="${r.url}" target="_blank">فتح الرابط</a>`;
+            }
+          }else{
+            actionsHtml = '<span>VIP مقفول</span>';
+          }
+
           item.innerHTML = `
             <div class="field-main">
               <i class="fa-solid fa-crown" style="color:var(--accent3);"></i>
               <span>${title}</span>
             </div>
             <div class="field-actions">
-              ${
-                activeVip
-                  ? (isVid ? '<a href="'+r.url+'" target="_blank">فتح الفيديو</a>'
-                           : '<a href="'+r.url+'" target="_blank">فتح الرابط</a>')
-                  : '<span>VIP مقفول</span>'
-              }
+              ${actionsHtml}
             </div>
           `;
+
+          const btn = item.querySelector(".inline-play-btn");
+          if(btn && activeVip && isVid){
+            btn.addEventListener("click", () => setPreview(r.url));
+          }
+
           vipFieldsBox.appendChild(item);
         }else{
+          // مفتوح
           anyOpen = true;
           const item = document.createElement("div");
           item.className = "field-item";
+          let actionsHtml = "";
+
+          if(isVid){
+            actionsHtml = `
+              <button class="inline-play-btn">تشغيل داخل الصفحة</button>
+              <a href="${r.url}" target="_blank">فتح الرابط</a>
+            `;
+          }else{
+            actionsHtml = `<a href="${r.url}" target="_blank">فتح الرابط</a>`;
+          }
+
           item.innerHTML = `
             <div class="field-main">
               <i class="fa-solid fa-circle-play" style="color:var(--accent);"></i>
               <span>${title}</span>
             </div>
             <div class="field-actions">
-              ${
-                isVid
-                  ? '<a href="'+r.url+'" target="_blank">فتح الفيديو</a>'
-                  : '<a href="'+r.url+'" target="_blank">فتح الرابط</a>'
-              }
+              ${actionsHtml}
             </div>
           `;
+
+          const btn = item.querySelector(".inline-play-btn");
+          if(btn && isVid){
+            btn.addEventListener("click", () => setPreview(r.url));
+          }
+
           openFieldsBox.appendChild(item);
         }
       });
