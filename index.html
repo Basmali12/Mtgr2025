@@ -790,6 +790,33 @@
 
   const WHATSAPP_NUMBER = "9647729373260";
 
+  // 🔹 نفس الدالة اللي جربناها على الكود الصغير
+  function normalizeDriveImageUrl(url){
+    if(!url) return "";
+    try{
+      if(url.includes("drive.google.com/thumbnail")) return url;
+
+      let fileId = null;
+
+      if(url.includes("/d/")){
+        const m = url.match(/\/d\/([^/]+)/);
+        if(m && m[1]) fileId = m[1];
+      }
+
+      if(!fileId && url.includes("id=")){
+        const m2 = url.match(/[?&]id=([^&]+)/);
+        if(m2 && m2[1]) fileId = m2[1];
+      }
+
+      if(fileId){
+        return "https://drive.google.com/thumbnail?id="+fileId+"&sz=w1000";
+      }
+      return url;
+    }catch(e){
+      return url;
+    }
+  }
+
   let currentUserId = null;
   let isVip = false;
   let vipUntil = null;
@@ -837,7 +864,6 @@
   const accNote        = document.getElementById("accNote");
   const storeLogoutBtn = document.getElementById("storeLogoutBtn");
 
-  // عناصر إعلان الترحيب
   const welcomeAdWrapper = document.getElementById("welcomeAdWrapper");
   const welcomeAdTextEl  = document.getElementById("welcomeAdText");
   const welcomeSkipBtn   = document.getElementById("welcomeSkipBtn");
@@ -1022,7 +1048,6 @@
     renderProducts();
     renderCoursesIndex();
 
-    // إذا كان رابط فيه ?p=ID افتح الكورس مباشرة
     const params = new URLSearchParams(window.location.search);
     const pid = params.get("p");
     if(pid){
@@ -1051,7 +1076,11 @@
     filtered.forEach(p => {
       const card = document.createElement("article");
       card.className = "product-card" + (p.accessVip ? " vip" : "");
-      const imgUrl = p.image || "";
+
+      // 🔹 نستخدم دالة التحويل هنا
+      const imgUrlRaw = p.image || "";
+      const imgUrl    = normalizeDriveImageUrl(imgUrlRaw);
+
       const ratingSum   = typeof p.ratingSum === "number" ? p.ratingSum : 0;
       const ratingCount = typeof p.ratingCount === "number" ? p.ratingCount : 0;
       const avgRating   = ratingCount > 0 ? (ratingSum / ratingCount) : 0;
@@ -1210,7 +1239,9 @@
         const title = r.title || ("عنصر " + (index+1));
 
         if(isVid && !previewSet && ((r.access !== "vip") || (r.access === "vip" && activeVip))){
-          coursePreview.innerHTML = buildVideoElement(r.url, product.image || "");
+          // 🔹 نستخدم صورة المنتج بعد التحويل بوستر للفيديو
+          const poster = normalizeDriveImageUrl(product.image || "");
+          coursePreview.innerHTML = buildVideoElement(r.url, poster);
           coursePreview.style.display = "block";
           previewSet = true;
           return;
